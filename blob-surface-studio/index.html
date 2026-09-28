@@ -1,0 +1,631 @@
+<title>Blob Surface Studio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+:root{
+  --bg:#f2f0f3; --panel:#ffffff; --ink:#1d1a21; --muted:#6d6674; --line:#e1dce4;
+  --accent:#a8367a; --accent-soft:#f5e3ee; --stage:#e9e6eb;
+  --sans:"Public Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#16141a; --panel:#1f1c24; --ink:#ece8f0; --muted:#a39bab; --line:#34303a;
+    --accent:#e27ab4; --accent-soft:#3a2231; --stage:#26222b; color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#16141a; --panel:#1f1c24; --ink:#ece8f0; --muted:#a39bab; --line:#34303a;
+  --accent:#e27ab4; --accent-soft:#3a2231; --stage:#26222b; color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:14px;line-height:1.5;
+  padding-inline:clamp(16px,3vw,32px);padding-block:20px 40px}
+.wrap{max-width:1320px;margin:0 auto;display:grid;gap:18px}
+header{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:8px 24px}
+h1{font-size:22px;font-weight:700;letter-spacing:-0.01em;margin:0;text-wrap:balance}
+header p{margin:0;color:var(--muted);max-width:70ch}
+.tabs{display:inline-flex;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:3px;gap:3px}
+.tabs button{font:inherit;font-weight:600;border:0;background:transparent;color:var(--muted);padding:6px 14px;border-radius:7px;cursor:pointer}
+.tabs button[aria-pressed="true"]{background:var(--accent-soft);color:var(--accent)}
+button:focus-visible,input:focus-visible,canvas:focus-visible,label.file:focus-within{outline:2px solid var(--accent);outline-offset:2px}
+.main{display:grid;grid-template-columns:minmax(0,1fr) 330px;gap:18px;align-items:start}
+@media (max-width:900px){.main{grid-template-columns:1fr}}
+.stage{background:var(--stage);border-radius:12px;padding:12px;position:relative;display:grid;place-items:center;min-height:300px}
+.stage canvas{display:block;width:100%;max-width:100%;border-radius:6px}
+#gl{aspect-ratio:1/0.85;cursor:grab;touch-action:none}
+#gl:active{cursor:grabbing}
+#c2d{aspect-ratio:1/1}
+.busy{position:absolute;top:18px;left:18px;font:500 12px var(--mono);color:var(--muted);background:var(--panel);border:1px solid var(--line);padding:3px 8px;border-radius:6px}
+.load{position:absolute;inset:12px;display:grid;place-items:center;border:2px dashed var(--line);border-radius:8px;background:var(--stage);text-align:center;padding:24px}
+.load.over{border-color:var(--accent)}
+.load div{display:grid;gap:10px;max-width:46ch;justify-items:center}
+.load strong{font-size:16px}
+.load p{margin:0;color:var(--muted)}
+.hint{margin:8px 2px 0;color:var(--muted);font-size:12.5px}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px;display:grid;gap:18px}
+.group{display:grid;gap:12px}
+.group h2{margin:0;font-size:11px;font-weight:600;letter-spacing:.09em;text-transform:uppercase;color:var(--muted)}
+.ctl{display:grid;gap:4px}
+.ctl .top{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.ctl label{font-weight:500}
+.val{font:500 12.5px var(--mono);color:var(--accent);font-variant-numeric:tabular-nums}
+.sub{font-size:12px;color:var(--muted)}
+input[type=range]{width:100%;accent-color:var(--accent)}
+.scale{font:500 11.5px var(--mono);color:var(--muted);display:flex;justify-content:space-between}
+.row{display:flex;flex-wrap:wrap;gap:10px 14px;align-items:center}
+.sw{display:flex;align-items:center;gap:6px;font-size:13px}
+input[type=color]{width:34px;height:26px;border:1px solid var(--line);border-radius:6px;background:var(--panel);padding:1px;cursor:pointer}
+.chk{display:flex;gap:8px;align-items:flex-start;font-size:13px}
+.chk input{margin-top:3px;accent-color:var(--accent)}
+.btn,label.file{font:600 12.5px var(--sans);border:1px solid var(--accent);color:var(--accent);background:transparent;border-radius:7px;padding:5px 12px;cursor:pointer;justify-self:start}
+label.file input{position:absolute;opacity:0;width:1px;height:1px}
+.stats{font:500 12px/1.6 var(--mono);color:var(--ink);background:var(--stage);border-radius:8px;padding:8px 10px;font-variant-numeric:tabular-nums}
+.src{font-size:12px;color:var(--muted)}
+[hidden]{display:none!important}
+</style>
+
+<div class="wrap">
+  <header>
+    <div>
+      <h1>Blob Surface Studio</h1>
+      <p>BSA (PDB 4F5S) coarse-grained to one bead per residue and drawn as a Gaussian blob surface you can turn in 3D. The coacervate tab builds a flat 2D scene: projected BSA shapes packed in a droplet, threaded by flexible PDDA chains.</p>
+    </div>
+    <div class="tabs" role="group" aria-label="Scene">
+      <button id="tab-single" aria-pressed="true">Single BSA (3D)</button>
+      <button id="tab-coac" aria-pressed="false">PDDA/BSA coacervate (2D)</button>
+    </div>
+  </header>
+
+  <div class="main">
+    <div>
+      <div class="stage" id="stage">
+        <canvas id="gl" tabindex="0" aria-label="BSA surface. Drag or use arrow keys to rotate, scroll to zoom."></canvas>
+        <canvas id="c2d" hidden aria-label="2D PDDA/BSA coacervate"></canvas>
+        <div class="busy" id="busy" hidden>building…</div>
+        <div class="load" id="load" hidden>
+          <div>
+            <strong>Load the BSA structure</strong>
+            <p>Drop 4F5S.pdb or 4F5S.cif here, or pick the file. The page keeps only the Cα position of each residue in the first chain and remembers it in this browser.</p>
+            <label class="file">Choose file<input type="file" id="file-drop" accept=".pdb,.cif,.ent,.txt"></label>
+            <p id="load-msg"></p>
+          </div>
+        </div>
+      </div>
+      <p class="hint" id="hint"></p>
+    </div>
+
+    <aside class="panel">
+      <div class="group">
+        <h2>Surface</h2>
+        <div class="ctl">
+          <div class="top"><label for="res">Blur (map resolution)</label><span class="val" id="res-v"></span></div>
+          <input type="range" id="res" min="3" max="20" step="0.5" value="8">
+          <div class="scale"><span>residue bumps</span><span>smooth blob</span></div>
+          <span class="sub">Each residue is a Gaussian with σ² = (0.225 × resolution)² + (2.2 Å)². The contour is set so the enclosed volume stays at 1.21 Å³/Da.</span>
+        </div>
+        <div class="ctl">
+          <div class="top"><label for="flat">Cartoon flatness</label><span class="val" id="flat-v"></span></div>
+          <input type="range" id="flat" min="0" max="1" step="0.05" value="0">
+        </div>
+        <div class="ctl">
+          <div class="top"><label for="ao">Crevice shading</label><span class="val" id="ao-v"></span></div>
+          <input type="range" id="ao" min="0" max="1" step="0.05" value="0.6">
+        </div>
+        <div class="ctl">
+          <div class="top"><label for="ow">Outline width</label><span class="val" id="ow-v"></span></div>
+          <input type="range" id="ow" min="0" max="8" step="0.5" value="2">
+        </div>
+      </div>
+
+      <div class="group" id="g-coac" hidden>
+        <h2>Coacervate</h2>
+        <div class="ctl">
+          <div class="top"><label for="nbsa">Number of BSA</label><span class="val" id="nbsa-v"></span></div>
+          <input type="range" id="nbsa" min="5" max="150" step="1" value="40">
+        </div>
+        <div class="ctl">
+          <div class="top"><label for="ratio">PDDA : BSA charge ratio</label><span class="val" id="ratio-v"></span></div>
+          <input type="range" id="ratio" min="-2" max="2" step="0.05" value="0" list="ratio-ticks">
+          <datalist id="ratio-ticks"><option value="-2"></option><option value="-1"></option><option value="0"></option><option value="1"></option><option value="2"></option></datalist>
+          <div class="scale"><span>1 : 4</span><span>1 : 2</span><span>1 : 1</span><span>2 : 1</span><span>4 : 1</span></div>
+          <span class="sub">Positive PDDA monomers per negative BSA charge.</span>
+        </div>
+        <div class="ctl">
+          <div class="top"><label for="zb">BSA net charge</label><span class="val" id="zb-v"></span></div>
+          <input type="range" id="zb" min="5" max="30" step="1" value="17">
+          <span class="sub">About −17 near pH 7. Sets how many PDDA monomers one BSA neutralises.</span>
+        </div>
+        <div class="ctl">
+          <div class="top"><label for="clen">PDDA chain length</label><span class="val" id="clen-v"></span></div>
+          <input type="range" id="clen" min="10" max="300" step="5" value="60">
+        </div>
+        <div class="ctl">
+          <div class="top"><label for="lp">PDDA persistence length</label><span class="val" id="lp-v"></span></div>
+          <input type="range" id="lp" min="5" max="100" step="1" value="25">
+          <div class="scale"><span>floppy</span><span>stiff</span></div>
+        </div>
+        <div class="ctl">
+          <div class="top"><label for="phi">Packing in the droplet</label><span class="val" id="phi-v"></span></div>
+          <input type="range" id="phi" min="0.25" max="0.8" step="0.05" value="0.55">
+          <span class="sub">Area fraction covered by BSA shapes inside the droplet.</span>
+        </div>
+        <label class="chk"><input type="checkbox" id="excess" checked><span>Put the excess beyond 1 : 1 in the dilute phase</span></label>
+        <label class="chk"><input type="checkbox" id="tint" checked><span>Tint the coacervate phase</span></label>
+        <button class="btn" id="reseed">New arrangement</button>
+        <div class="stats" id="stats"></div>
+      </div>
+
+      <div class="group">
+        <h2>Colour</h2>
+        <div class="row">
+          <label class="sw"><input type="color" id="c-bsa" value="#ed80c7">BSA</label>
+          <label class="sw" id="sw-pdda" hidden><input type="color" id="c-pdda" value="#f5cc59">PDDA</label>
+          <label class="sw"><input type="color" id="c-line" value="#150f14">Line</label>
+          <label class="sw"><input type="color" id="c-bg" value="#f6f6f6">Ground</label>
+        </div>
+        <label class="chk" id="dom-wrap"><input type="checkbox" id="dom"><span>Colour by domain (I 1–183, II 184–376, III 377–583)</span></label>
+        <div class="row" id="dom-cols" hidden>
+          <label class="sw"><input type="color" id="c-d1" value="#5a78d9">I</label>
+          <label class="sw"><input type="color" id="c-d2" value="#ed85cc">II</label>
+          <label class="sw"><input type="color" id="c-d3" value="#4dad66">III</label>
+        </div>
+      </div>
+
+      <div class="group" id="g-view">
+        <h2>View</h2>
+        <label class="chk"><input type="checkbox" id="spin"><span>Spin slowly</span></label>
+        <button class="btn" id="reset">Reset view</button>
+      </div>
+
+      <div class="group">
+        <h2>Structure</h2>
+        <p class="src" id="src">No structure loaded.</p>
+        <label class="file">Load another PDB or mmCIF<input type="file" id="file-panel" accept=".pdb,.cif,.ent,.txt"></label>
+      </div>
+    </aside>
+  </div>
+</div>
+
+<script>
+"use strict";
+const $ = id => document.getElementById(id);
+
+// Cα trace of BSA (PDB 4F5S chain A): [resSeq, one-letter code, x, y, z]. Empty until embedded.
+const EMBEDDED = [];
+
+const AA = {ALA:"A",ARG:"R",ASN:"N",ASP:"D",CYS:"C",GLN:"Q",GLU:"E",GLY:"G",HIS:"H",ILE:"I",LEU:"L",LYS:"K",MET:"M",PHE:"F",PRO:"P",SER:"S",THR:"T",TRP:"W",TYR:"Y",VAL:"V"};
+const MASS = {A:71,R:156,N:114,D:115,C:103,Q:128,E:129,G:57,H:137,I:113,L:113,K:128,M:131,F:147,P:97,S:87,T:101,W:186,Y:163,V:99,X:110};
+const DOMAIN_END = [183, 376];          // BSA domains I 1–183, II 184–376, III 377–583
+const LIGHT = norm([-0.45, 0.6, 0.75]);  // shared by the 3D shader and the 2D sprites
+const MONOMER = 5;                      // Å of PDDA contour per charged monomer
+const CHAIN_W = 10;                     // Å, drawn PDDA thickness
+const NLIB = 24;                        // projected BSA orientations for the 2D scene
+
+const state = { res:8, flat:0, ao:0.6, ow:2, dom:false, spin:false,
+  nbsa:40, ratio:0, zb:17, clen:60, lp:25, phi:0.55, excess:true, tint:true, seed:1 };
+let scene = "single", P = null;
+
+// ---------- small helpers ----------
+function norm(v){ const l=Math.hypot(v[0],v[1],v[2])||1; return [v[0]/l,v[1]/l,v[2]/l]; }
+function hex(h){ return [1,3,5].map(i=>parseInt(h.substr(i,2),16)/255); }
+function rng(seed){ let a=seed>>>0; return ()=>{ a=(a+0x6D2B79F5)>>>0; let t=a; t=Math.imul(t^t>>>15,t|1); t^=t+Math.imul(t^t>>>7,t|61); return ((t^t>>>14)>>>0)/4294967296; }; }
+function gauss(r){ return Math.sqrt(-2*Math.log(1-r()))*Math.cos(6.283185*r()); }
+const sigmaOf = res => Math.sqrt((0.225*res)**2 + 2.2**2);
+
+// ---------- structure ----------
+function parsePDB(t){ const out=[]; let chain=null;
+  for(const l of t.split(/\r?\n/)){
+    if(l.startsWith("ENDMDL") && out.length) break;
+    if(!l.startsWith("ATOM") || l.substr(12,4).trim()!=="CA") continue;
+    if(l[16]!==" " && l[16]!=="A") continue;
+    if(chain===null) chain=l[21]; if(l[21]!==chain) continue;
+    out.push([+l.substr(22,4), AA[l.substr(17,3)]||"X", +l.substr(30,8), +l.substr(38,8), +l.substr(46,8)]);
+  } return out; }
+function parseCIF(t){ const L=t.split(/\r?\n/), cols=[]; let i=0;
+  while(i<L.length && !L[i].startsWith("_atom_site.")) i++;
+  while(i<L.length && L[i].startsWith("_atom_site.")) cols.push(L[i++].trim().slice(11));
+  const [G,A,ALT,CH,S,R,X,Y,Z,M]=["group_PDB","label_atom_id","label_alt_id","auth_asym_id","auth_seq_id","label_comp_id","Cartn_x","Cartn_y","Cartn_z","pdbx_PDB_model_num"].map(c=>cols.indexOf(c));
+  const out=[]; let chain=null, model=null;
+  for(; i<L.length; i++){ const l=L[i]; if(l[0]==="#"||l.startsWith("loop_")||l[0]==="_") break;
+    const f=l.trim().split(/\s+/); if(f[G]!=="ATOM" || f[A]!=="CA") continue;
+    if(M>=0){ if(model===null) model=f[M]; if(f[M]!==model) continue; }
+    if(ALT>=0 && f[ALT]!=="." && f[ALT]!=="A") continue;
+    if(chain===null) chain=f[CH]; if(f[CH]!==chain) continue;
+    out.push([+f[S], AA[f[R]]||"X", +f[X], +f[Y], +f[Z]]);
+  } return out; }
+
+function eig3(a){ const v=[[1,0,0],[0,1,0],[0,0,1]];
+  for(let s=0;s<40;s++) for(const [p,q] of [[0,1],[0,2],[1,2]]){ if(Math.abs(a[p][q])<1e-12) continue;
+    const th=(a[q][q]-a[p][p])/(2*a[p][q]), t=Math.sign(th||1)/(Math.abs(th)+Math.sqrt(th*th+1)), c=1/Math.sqrt(t*t+1), sn=t*c;
+    for(let k=0;k<3;k++){ const x=a[k][p], y=a[k][q]; a[k][p]=c*x-sn*y; a[k][q]=sn*x+c*y; }
+    for(let k=0;k<3;k++){ const x=a[p][k], y=a[q][k]; a[p][k]=c*x-sn*y; a[q][k]=sn*x+c*y; }
+    for(let k=0;k<3;k++){ const x=v[k][p], y=v[k][q]; v[k][p]=c*x-sn*y; v[k][q]=sn*x+c*y; } }
+  return {d:[a[0][0],a[1][1],a[2][2]], v}; }
+
+// Centre the trace and turn it so the flattest axis faces the viewer.
+function setStructure(res, label){
+  const n=res.length; if(n<20) throw new Error("Found only "+n+" Cα atoms.");
+  let c=[0,0,0]; for(const r of res) for(let k=0;k<3;k++) c[k]+=r[2+k]/n;
+  const C=[[0,0,0],[0,0,0],[0,0,0]];
+  for(const r of res) for(let a=0;a<3;a++) for(let b=0;b<3;b++) C[a][b]+=(r[2+a]-c[a])*(r[2+b]-c[b]);
+  const {d,v}=eig3(C), ord=[0,1,2].sort((a,b)=>d[b]-d[a]);
+  const ax=ord.map(j=>[v[0][j],v[1][j],v[2][j]]);
+  ax[2]=[ax[0][1]*ax[1][2]-ax[0][2]*ax[1][1], ax[0][2]*ax[1][0]-ax[0][0]*ax[1][2], ax[0][0]*ax[1][1]-ax[0][1]*ax[1][0]];
+  const x=new Float32Array(n), y=new Float32Array(n), z=new Float32Array(n), w=new Float32Array(n), dom=new Uint8Array(n);
+  let mass=0, rmax=0;
+  res.forEach((r,i)=>{ const p=[r[2]-c[0],r[3]-c[1],r[4]-c[2]];
+    x[i]=p[0]*ax[0][0]+p[1]*ax[0][1]+p[2]*ax[0][2]; y[i]=p[0]*ax[1][0]+p[1]*ax[1][1]+p[2]*ax[1][2]; z[i]=p[0]*ax[2][0]+p[1]*ax[2][1]+p[2]*ax[2][2];
+    w[i]=MASS[r[1]]||110; mass+=w[i]; dom[i]=r[0]<=DOMAIN_END[0]?0:r[0]<=DOMAIN_END[1]?1:2;
+    rmax=Math.max(rmax,Math.hypot(x[i],y[i],z[i])); });
+  P={n,x,y,z,w,dom,mass,rmax,label};
+  lib.clear(); scene3d.mesh=null;
+  $("src").textContent=`${label}: ${n} residues (${res[0][0]}–${res[n-1][0]}), ${(mass/1000+0.018).toFixed(1)} kDa, one Cα bead per residue.`;
+}
+
+// ---------- density grid, contour level, surface ----------
+function density(X,Y,Z,W,n,sig,h){
+  let lo=[1e9,1e9,1e9], hi=[-1e9,-1e9,-1e9];
+  for(let i=0;i<n;i++){ const p=[X[i],Y[i],Z[i]]; for(let k=0;k<3;k++){ lo[k]=Math.min(lo[k],p[k]); hi[k]=Math.max(hi[k],p[k]); } }
+  const pad=3*sig+2*h, o=lo.map(v=>v-pad), N=[0,1,2].map(k=>Math.ceil((hi[k]-lo[k]+2*pad)/h)+1);
+  const [nx,ny,nz]=N, f=new Float32Array(nx*ny*nz), R=Math.ceil(3*sig/h), K=2*R+1, k2=1/(2*sig*sig);
+  const ex=new Float32Array(K), ey=new Float32Array(K), ez=new Float32Array(K);
+  for(let a=0;a<n;a++){
+    const gx=(X[a]-o[0])/h, gy=(Y[a]-o[1])/h, gz=(Z[a]-o[2])/h, ix=Math.round(gx)-R, iy=Math.round(gy)-R, iz=Math.round(gz)-R;
+    for(let k=0;k<K;k++){ let d=(ix+k-gx)*h; ex[k]=Math.exp(-d*d*k2); d=(iy+k-gy)*h; ey[k]=Math.exp(-d*d*k2); d=(iz+k-gz)*h; ez[k]=W[a]*Math.exp(-d*d*k2); }
+    for(let c=0;c<K;c++){ const vz=ez[c]; if(vz<1e-3) continue;
+      for(let b=0;b<K;b++){ const v=vz*ey[b]; if(v<1e-3) continue;
+        const base=((iz+c)*ny+iy+b)*nx+ix; for(let k=0;k<K;k++) f[base+k]+=v*ex[k]; } } }
+  return {f,nx,ny,nz,ox:o[0],oy:o[1],oz:o[2],h};
+}
+// Contour level that encloses the protein volume (1.21 Å³ per Da), found with a histogram.
+function isoForVolume(F, V){
+  const f=F.f, want=V/F.h**3, B=4096; let mx=0; for(let i=0;i<f.length;i++) if(f[i]>mx) mx=f[i];
+  const hist=new Uint32Array(B); for(let i=0;i<f.length;i++) hist[Math.min(B-1,(f[i]/mx*B)|0)]++;
+  let acc=0; for(let b=B-1;b>0;b--){ if(acc+hist[b]>=want) return mx*(b+1-(want-acc)/hist[b])/B; acc+=hist[b]; }
+  return mx*0.05;
+}
+function sample(F,x,y,z){ const {f,nx,ny,nz,h}=F; let gx=(x-F.ox)/h, gy=(y-F.oy)/h, gz=(z-F.oz)/h;
+  if(gx<0||gy<0||gz<0||gx>=nx-1||gy>=ny-1||gz>=nz-1) return 0;
+  const i=gx|0, j=gy|0, k=gz|0, u=gx-i, v=gy-j, w=gz-k, b=(k*ny+j)*nx+i, sy=nx, sz=nx*ny;
+  const c00=f[b]*(1-u)+f[b+1]*u, c10=f[b+sy]*(1-u)+f[b+sy+1]*u, c01=f[b+sz]*(1-u)+f[b+sz+1]*u, c11=f[b+sy+sz]*(1-u)+f[b+sy+sz+1]*u;
+  return (c00*(1-v)+c10*v)*(1-w)+(c01*(1-v)+c11*v)*w; }
+
+// Naive surface nets: one vertex per cell the contour crosses, one quad per crossed grid edge.
+function surfaceNets(F, iso){
+  const {f,nx,ny,nz,h}=F, sy=nx, sz=nx*ny, vid=new Int32Array(nx*ny*nz), pos=[], idx=[];
+  const CX=[0,1,0,1,0,1,0,1], CY=[0,0,1,1,0,0,1,1], CZ=[0,0,0,0,1,1,1,1];
+  const E=[0,1,2,3,4,5,6,7,0,2,1,3,4,6,5,7,0,4,1,5,2,6,3,7], v=new Float32Array(8);
+  for(let z=0;z<nz-1;z++) for(let y=0;y<ny-1;y++) for(let x=0;x<nx-1;x++){
+    const i=x+y*sy+z*sz; let m=0;
+    for(let k=0;k<8;k++){ v[k]=f[i+CX[k]+CY[k]*sy+CZ[k]*sz]-iso; if(v[k]>0) m|=1<<k; }
+    if(m===0||m===255){ vid[i]=-1; continue; }
+    let ax=0,ay=0,az=0,c=0;
+    for(let e=0;e<24;e+=2){ const a=E[e], b=E[e+1]; if((v[a]>0)!==(v[b]>0)){ const t=v[a]/(v[a]-v[b]);
+      ax+=CX[a]+t*(CX[b]-CX[a]); ay+=CY[a]+t*(CY[b]-CY[a]); az+=CZ[a]+t*(CZ[b]-CZ[a]); c++; } }
+    vid[i]=pos.length/3; pos.push(F.ox+(x+ax/c)*h, F.oy+(y+ay/c)*h, F.oz+(z+az/c)*h);
+  }
+  for(let z=1;z<nz-1;z++) for(let y=1;y<ny-1;y++) for(let x=1;x<nx-1;x++){
+    const i=x+y*sy+z*sz, a=f[i]>iso;
+    if(a!==(f[i+1]>iso))  idx.push(vid[i],vid[i-sy],vid[i-sy-sz], vid[i],vid[i-sy-sz],vid[i-sz]);
+    if(a!==(f[i+sy]>iso)) idx.push(vid[i],vid[i-sz],vid[i-1-sz],  vid[i],vid[i-1-sz],vid[i-1]);
+    if(a!==(f[i+sz]>iso)) idx.push(vid[i],vid[i-1],vid[i-1-sy],   vid[i],vid[i-1-sy],vid[i-sy]);
+  }
+  return {pos:new Float32Array(pos), idx:new Uint32Array(idx)};
+}
+
+function buildMesh(){
+  const sig=sigmaOf(state.res), h=Math.min(2.5,Math.max(0.9,sig*0.42));
+  const F=density(P.x,P.y,P.z,P.w,P.n,sig,h), iso=isoForVolume(F,P.mass*1.21);
+  const {pos,idx}=surfaceNets(F,iso), nv=pos.length/3;
+  const nrm=new Float32Array(pos.length), ao=new Float32Array(nv), dom=new Float32Array(3*nv), e=h*0.5;
+  for(let i=0;i<nv;i++){ const x=pos[3*i], y=pos[3*i+1], z=pos[3*i+2];
+    const g=norm([sample(F,x-e,y,z)-sample(F,x+e,y,z), sample(F,x,y-e,z)-sample(F,x,y+e,z), sample(F,x,y,z-e)-sample(F,x,y,z+e)]);
+    nrm.set(g,3*i);
+    // crevices: how much density sits just outside the surface along the normal
+    const occ=0.5*sample(F,x+g[0]*4,y+g[1]*4,z+g[2]*4)+0.3*sample(F,x+g[0]*8,y+g[1]*8,z+g[2]*8)+0.2*sample(F,x+g[0]*13,y+g[1]*13,z+g[2]*13);
+    ao[i]=1-Math.min(1,occ/iso*1.6);
+    let best=1e9, bd=0; for(let r=0;r<P.n;r++){ const d=(P.x[r]-x)**2+(P.y[r]-y)**2+(P.z[r]-z)**2; if(d<best){ best=d; bd=P.dom[r]; } }
+    dom[3*i+bd]=1;
+  }
+  // make every triangle wind counter-clockwise seen from outside
+  for(let t=0;t<idx.length;t+=3){ const a=idx[t]*3, b=idx[t+1]*3, c=idx[t+2]*3;
+    const u=[pos[b]-pos[a],pos[b+1]-pos[a+1],pos[b+2]-pos[a+2]], w=[pos[c]-pos[a],pos[c+1]-pos[a+1],pos[c+2]-pos[a+2]];
+    const fn=[u[1]*w[2]-u[2]*w[1], u[2]*w[0]-u[0]*w[2], u[0]*w[1]-u[1]*w[0]];
+    if(fn[0]*(nrm[a]+nrm[b]+nrm[c])+fn[1]*(nrm[a+1]+nrm[b+1]+nrm[c+1])+fn[2]*(nrm[a+2]+nrm[b+2]+nrm[c+2])<0){ const s=idx[t+1]; idx[t+1]=idx[t+2]; idx[t+2]=s; } }
+  return {pos,nrm,ao,dom,idx};
+}
+
+// ---------- 3D view (WebGL2, no libraries) ----------
+const VS=`#version 300 es
+in vec3 p; in vec3 n; in float ao; in vec3 dm;
+uniform mat3 R; uniform vec2 S; uniform float zs, wpx; uniform vec2 px;
+out vec3 vn; out float vao; out vec3 vdm;
+void main(){ vec3 q=R*p; vn=normalize(R*n); vao=ao; vdm=dm;
+  vec4 c=vec4(q.xy*S, -q.z*zs, 1.0);
+  if(wpx>0.0){ c.xy+=normalize(vn.xy+1e-5)*wpx*px; c.z+=0.004; }
+  gl_Position=c; }`;
+const FS=`#version 300 es
+precision highp float;
+in vec3 vn; in float vao; in vec3 vdm;
+uniform vec3 base, d1, d2, d3, L, lc; uniform float useDom, flatness, aok, hull;
+out vec4 o;
+void main(){
+  if(hull>0.5){ o=vec4(lc,1.0); return; }
+  vec3 n=normalize(vn), c=useDom>0.5 ? (d1*vdm.x+d2*vdm.y+d3*vdm.z)/max(vdm.x+vdm.y+vdm.z,1e-4) : base;
+  float lam=max(dot(n,L),0.0), rim=pow(1.0-max(n.z,0.0),3.0);
+  float s=(0.42+0.7*lam-0.18*rim)*mix(1.0,vao,aok);
+  float sp=pow(max(dot(n,normalize(L+vec3(0,0,1))),0.0),28.0)*0.22;
+  s=mix(s,0.95,flatness); sp*=1.0-flatness;
+  o=vec4(c*s+sp,1.0); }`;
+const scene3d = { gl:null, prog:null, mesh:null, buf:{}, rot:[1,0,0, 0,1,0, 0,0,1], zoom:1, count:0, dirty:true };
+
+function initGL(){
+  const cv=$("gl"), gl=cv.getContext("webgl2",{antialias:true,preserveDrawingBuffer:true});
+  if(!gl){ $("busy").hidden=false; $("busy").textContent="This browser has no WebGL2, so the 3D view cannot run."; return false; }
+  const sh=(t,s)=>{ const o=gl.createShader(t); gl.shaderSource(o,s); gl.compileShader(o); if(!gl.getShaderParameter(o,gl.COMPILE_STATUS)) throw gl.getShaderInfoLog(o); return o; };
+  const pr=gl.createProgram(); gl.attachShader(pr,sh(gl.VERTEX_SHADER,VS)); gl.attachShader(pr,sh(gl.FRAGMENT_SHADER,FS)); gl.linkProgram(pr);
+  scene3d.gl=gl; scene3d.prog=pr; scene3d.u={}; for(const u of ["R","S","zs","wpx","px","base","d1","d2","d3","L","lc","useDom","flatness","aok","hull"]) scene3d.u[u]=gl.getUniformLocation(pr,u);
+  scene3d.vao=gl.createVertexArray();
+  gl.enable(gl.DEPTH_TEST); gl.enable(gl.CULL_FACE);
+  return true;
+}
+function uploadMesh(M){
+  const {gl,prog}=scene3d; gl.bindVertexArray(scene3d.vao);
+  const attr=(name,data,size)=>{ const loc=gl.getAttribLocation(prog,name); if(loc<0) return;
+    const b=scene3d.buf[name]||(scene3d.buf[name]=gl.createBuffer()); gl.bindBuffer(gl.ARRAY_BUFFER,b); gl.bufferData(gl.ARRAY_BUFFER,data,gl.STATIC_DRAW);
+    gl.enableVertexAttribArray(loc); gl.vertexAttribPointer(loc,size,gl.FLOAT,false,0,0); };
+  attr("p",M.pos,3); attr("n",M.nrm,3); attr("ao",M.ao,1); attr("dm",M.dom,3);
+  const ib=scene3d.buf.idx||(scene3d.buf.idx=gl.createBuffer()); gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER,ib); gl.bufferData(gl.ELEMENT_ARRAY_BUFFER,M.idx,gl.STATIC_DRAW);
+  scene3d.count=M.idx.length; scene3d.mesh=M;
+}
+function draw3d(){
+  const {gl,u}=scene3d; if(!gl||!scene3d.count) return;
+  const cv=gl.canvas, dpr=Math.min(2,devicePixelRatio||1), W=Math.round(cv.clientWidth*dpr), H=Math.round(cv.clientHeight*dpr);
+  if(cv.width!==W||cv.height!==H){ cv.width=W; cv.height=H; }
+  gl.viewport(0,0,W,H); const bg=hex($("c-bg").value); gl.clearColor(bg[0],bg[1],bg[2],1); gl.clear(gl.COLOR_BUFFER_BIT|gl.DEPTH_BUFFER_BIT);
+  gl.useProgram(scene3d.prog); gl.bindVertexArray(scene3d.vao);
+  const half=(P.rmax+sigmaOf(state.res))*1.08/scene3d.zoom, asp=W/H;
+  const r=scene3d.rot; gl.uniformMatrix3fv(u.R,false,[r[0],r[3],r[6],r[1],r[4],r[7],r[2],r[5],r[8]]);
+  gl.uniform2f(u.S, asp>=1?1/(half*asp):1/half, asp>=1?1/half:asp/half); gl.uniform1f(u.zs,1/(P.rmax+30)); gl.uniform2f(u.px,2/W,2/H);
+  gl.uniform3fv(u.base,hex($("c-bsa").value)); gl.uniform3fv(u.d1,hex($("c-d1").value)); gl.uniform3fv(u.d2,hex($("c-d2").value)); gl.uniform3fv(u.d3,hex($("c-d3").value));
+  gl.uniform3fv(u.L,LIGHT); gl.uniform3fv(u.lc,hex($("c-line").value));
+  gl.uniform1f(u.useDom,state.dom?1:0); gl.uniform1f(u.flatness,state.flat); gl.uniform1f(u.aok,state.ao);
+  if(state.ow>0){ gl.cullFace(gl.FRONT); gl.uniform1f(u.hull,1); gl.uniform1f(u.wpx,state.ow*dpr); gl.drawElements(gl.TRIANGLES,scene3d.count,gl.UNSIGNED_INT,0); }
+  gl.cullFace(gl.BACK); gl.uniform1f(u.hull,0); gl.uniform1f(u.wpx,0); gl.drawElements(gl.TRIANGLES,scene3d.count,gl.UNSIGNED_INT,0);
+}
+// rotate by angle a about screen axis (ax,ay,0), applied on top of the current orientation
+function turn(ax,ay,a){ const c=Math.cos(a), s=Math.sin(a), t=1-c;
+  const m=[t*ax*ax+c, t*ax*ay, s*ay, t*ax*ay, t*ay*ay+c, -s*ax, -s*ay, s*ax, c], r=scene3d.rot, o=new Array(9);
+  for(let i=0;i<3;i++) for(let j=0;j<3;j++) o[3*i+j]=m[3*i]*r[j]+m[3*i+1]*r[3+j]+m[3*i+2]*r[6+j];
+  scene3d.rot=o; }
+function bindRotate(){
+  const cv=$("gl"); let last=null;
+  cv.addEventListener("pointerdown",e=>{ last=[e.clientX,e.clientY]; cv.setPointerCapture(e.pointerId); });
+  cv.addEventListener("pointermove",e=>{ if(!last) return; const dx=e.clientX-last[0], dy=e.clientY-last[1]; last=[e.clientX,e.clientY];
+    const l=Math.hypot(dx,dy); if(l) { turn(dy/l,dx/l,l*0.008); frame(); } });
+  const up=()=>last=null; cv.addEventListener("pointerup",up); cv.addEventListener("pointercancel",up);
+  cv.addEventListener("wheel",e=>{ e.preventDefault(); scene3d.zoom=Math.min(4,Math.max(0.4,scene3d.zoom*Math.exp(-e.deltaY*0.0012))); frame(); },{passive:false});
+  cv.addEventListener("keydown",e=>{ const k={ArrowLeft:[0,-1],ArrowRight:[0,1],ArrowUp:[-1,0],ArrowDown:[1,0]}[e.key]; if(!k) return; e.preventDefault(); turn(k[0],k[1],0.17); frame(); });
+}
+let spinT=0;
+function spinLoop(t){ if(!state.spin||scene!=="single"){ spinT=0; return; } if(spinT) turn(0,1,(t-spinT)*0.0004); spinT=t; draw3d(); requestAnimationFrame(spinLoop); }
+
+// ---------- 2D coacervate ----------
+// Library of projected BSA shapes: random 3D orientations, each flattened to a front-surface height map.
+const lib = new Map();
+function projections(res){
+  if(lib.has(res)) return lib.get(res);
+  const sig=sigmaOf(res), h=Math.max(1.4,sig*0.5), r=rng(20260928), out=[];
+  const X=new Float32Array(P.n), Y=new Float32Array(P.n), Z=new Float32Array(P.n);
+  for(let k=0;k<NLIB;k++){
+    const q=norm4([gauss(r),gauss(r),gauss(r),gauss(r)]), [a,b,c,d]=q;
+    const M=[1-2*(c*c+d*d),2*(b*c-a*d),2*(b*d+a*c), 2*(b*c+a*d),1-2*(b*b+d*d),2*(c*d-a*b), 2*(b*d-a*c),2*(c*d+a*b),1-2*(b*b+c*c)];
+    for(let i=0;i<P.n;i++){ const x=P.x[i], y=P.y[i], z=P.z[i]; X[i]=M[0]*x+M[1]*y+M[2]*z; Y[i]=M[3]*x+M[4]*y+M[5]*z; Z[i]=M[6]*x+M[7]*y+M[8]*z; }
+    const F=density(X,Y,Z,P.w,P.n,sig,h), iso=isoForVolume(F,P.mass*1.21), {nx,ny,nz,f}=F, sz=nx*ny;
+    const S=new Float32Array(sz), Hh=new Float32Array(sz); let zmin=1e9, area=0;
+    for(let j=0;j<ny;j++) for(let i=0;i<nx;i++){ const c2=j*nx+i; let m=0, top=NaN;
+      for(let k=nz-1;k>=0;k--){ const v=f[c2+k*sz]; if(v>m) m=v; if(isNaN(top)&&v>iso){ const vu=k<nz-1?f[c2+(k+1)*sz]:0; top=F.oz+(k+(v-iso)/(v-vu))*h; } }
+      S[c2]=m/iso-1; Hh[c2]=top; if(!isNaN(top)){ zmin=Math.min(zmin,top); area+=h*h; } }
+    for(let i=0;i<sz;i++) if(isNaN(Hh[i])) Hh[i]=zmin-4;
+    const Hb=blur2(blur2(Hh,nx,ny,Math.round(7/h)),nx,ny,Math.round(7/h));
+    out.push({nx,ny,h,ox:F.ox,oy:F.oy,S,H:Hh,Hb,sdf:sdf2(S,nx,ny,h),area,r:Math.sqrt(area/Math.PI)});
+  }
+  lib.set(res,out); if(lib.size>6) lib.delete(lib.keys().next().value);
+  return out;
+}
+function norm4(v){ const l=Math.hypot(...v); return v.map(x=>x/l); }
+function blur2(a,W,H,r){ if(r<1) return a; const o=new Float32Array(a.length), t=new Float32Array(a.length), k=2*r+1;
+  for(let y=0;y<H;y++){ let s=0; for(let x=-r;x<=r;x++) s+=a[y*W+Math.min(W-1,Math.max(0,x))];
+    for(let x=0;x<W;x++){ t[y*W+x]=s/k; s+=a[y*W+Math.min(W-1,x+r+1)]-a[y*W+Math.max(0,x-r)]; } }
+  for(let x=0;x<W;x++){ let s=0; for(let y=-r;y<=r;y++) s+=t[Math.min(H-1,Math.max(0,y))*W+x];
+    for(let y=0;y<H;y++){ o[y*W+x]=s/k; s+=t[Math.min(H-1,y+r+1)*W+x]-t[Math.max(0,y-r)*W+x]; } } return o; }
+// signed distance in Å to the silhouette (negative inside), two-pass chamfer
+function sdf2(S,W,H,h){ const n=W*H, out=new Float32Array(n);
+  for(const inside of [true,false]){ const D=new Float32Array(n); for(let i=0;i<n;i++) D[i]=(S[i]>0)===inside?1e6:0;
+    for(let y=0;y<H;y++) for(let x=0;x<W;x++){ const i=y*W+x; let d=D[i]; if(x>0) d=Math.min(d,D[i-1]+1); if(y>0){ d=Math.min(d,D[i-W]+1); if(x>0) d=Math.min(d,D[i-W-1]+1.414); if(x<W-1) d=Math.min(d,D[i-W+1]+1.414); } D[i]=d; }
+    for(let y=H-1;y>=0;y--) for(let x=W-1;x>=0;x--){ const i=y*W+x; let d=D[i]; if(x<W-1) d=Math.min(d,D[i+1]+1); if(y<H-1){ d=Math.min(d,D[i+W]+1); if(x<W-1) d=Math.min(d,D[i+W+1]+1.414); if(x>0) d=Math.min(d,D[i+W-1]+1.414); } D[i]=d; }
+    for(let i=0;i<n;i++) if((S[i]>0)===inside) out[i]=inside?-D[i]*h:D[i]*h; }
+  return out; }
+function bil(a,W,H,x,y){ if(x<0||y<0||x>=W-1||y>=H-1) return NaN; const i=x|0, j=y|0, u=x-i, v=y-j, b=j*W+i;
+  return (a[b]*(1-u)+a[b+1]*u)*(1-v)+(a[b+W]*(1-u)+a[b+W+1]*u)*v; }
+
+// Bake shading layers of one projection at s px per Å (grid y runs up, image rows run down).
+function bake(o,s){
+  const W=Math.ceil((o.nx-1)*o.h*s), H=Math.ceil((o.ny-1)*o.h*s), n=W*H;
+  const shade=new Float32Array(n), spec=new Float32Array(n), ao=new Float32Array(n), dist=new Float32Array(n);
+  const hv=[LIGHT[0],LIGHT[1],LIGHT[2]+1], hl=Math.hypot(...hv);
+  for(let py=0;py<H;py++) for(let px=0;px<W;px++){
+    const gx=(px+0.5)/(s*o.h), gy=(o.ny-1)-(py+0.5)/(s*o.h), i=py*W+px;
+    const Sv=bil(o.S,o.nx,o.ny,gx,gy); if(isNaN(Sv)){ dist[i]=1e3; continue; }
+    const gSx=(bil(o.S,o.nx,o.ny,gx+0.5,gy)-bil(o.S,o.nx,o.ny,gx-0.5,gy))/o.h, gSy=(bil(o.S,o.nx,o.ny,gx,gy+0.5)-bil(o.S,o.nx,o.ny,gx,gy-0.5))/o.h;
+    const g=Math.hypot(gSx,gSy)||1e-6, sd=bil(o.sdf,o.nx,o.ny,gx,gy);
+    dist[i]=(Math.abs(sd)<3*o.h ? -Sv/g : sd)*s;           // px, negative inside
+    if(dist[i]>0.5) continue;
+    let dx=(bil(o.H,o.nx,o.ny,gx+0.5,gy)-bil(o.H,o.nx,o.ny,gx-0.5,gy))/o.h, dy=(bil(o.H,o.nx,o.ny,gx,gy+0.5)-bil(o.H,o.nx,o.ny,gx,gy-0.5))/o.h;
+    const gl=Math.hypot(dx,dy); if(gl>6){ dx*=6/gl; dy*=6/gl; }
+    const nn=norm([-dx,-dy,1]), lam=Math.max(0,nn[0]*LIGHT[0]+nn[1]*LIGHT[1]+nn[2]*LIGHT[2]);
+    shade[i]=0.42+0.7*lam-0.18*Math.pow(1-nn[2],3);
+    spec[i]=Math.pow(Math.max(0,(nn[0]*hv[0]+nn[1]*hv[1]+nn[2]*hv[2])/hl),28)*0.22;
+    ao[i]=1-Math.min(1,Math.max(0,bil(o.Hb,o.nx,o.ny,gx,gy)-bil(o.H,o.nx,o.ny,gx,gy))*0.09);
+  }
+  return {W,H,shade,spec,ao,dist,ax:-o.ox*s,ay:(o.oy+(o.ny-1)*o.h)*s};
+}
+function colourise(b,cv){
+  const base=hex($("c-bsa").value), lc=hex($("c-line").value), w=state.ow, fl=state.flat, ak=state.ao, pad=Math.ceil(w)+1;
+  cv.width=b.W+2*pad; cv.height=b.H+2*pad; const ctx=cv.getContext("2d"), img=ctx.createImageData(cv.width,cv.height), d=img.data;
+  for(let y=0;y<b.H;y++) for(let x=0;x<b.W;x++){ const i=y*b.W+x, ds=b.dist[i];
+    const fa=Math.min(1,Math.max(0,0.5-ds)), la=w>0?Math.min(1,Math.max(0,w+0.5-ds)):0; if(la<=0&&fa<=0) continue;
+    const s=(b.shade[i]*(1-ak+ak*b.ao[i]))*(1-fl)+0.95*fl, sp=b.spec[i]*(1-fl);
+    // the line sits outside the fill and also covers the fill's antialiased rim
+    const lw=w>0?Math.min(1,Math.max(0,ds+0.5)):0;
+    const k=4*((y+pad)*cv.width+x+pad);
+    for(let c=0;c<3;c++){ const fc=Math.min(1,base[c]*s+sp); d[k+c]=255*(w>0? fc*(1-lw)+lc[c]*lw : fc); }
+    d[k+3]=255*Math.max(fa,la);
+  }
+  ctx.putImageData(img,0,0); cv.ax=b.ax+pad; cv.ay=b.ay+pad; return cv;
+}
+
+const coac = { layout:null, key:"", sprites:[], bakeKey:"", baked:[] };
+function counts(){
+  const r=Math.pow(2,state.ratio), N=state.nbsa, M=Math.round(r*N*state.zb);
+  const nc=Math.max(1,Math.round(M/state.clen)), per=Math.max(2,Math.round(M/nc));
+  let bIn=N, cIn=nc;
+  if(state.excess){ if(r<1) bIn=Math.max(1,Math.round(N*r)); else cIn=Math.max(1,Math.round(nc/r)); }
+  return {r,N,M,nc,per,bIn,cIn,bOut:N-bIn,cOut:nc-cIn};
+}
+function layout(){
+  const C=counts(), L=projections(state.res), rnd=rng(state.seed*7919+1);
+  const area=L.reduce((s,o)=>s+o.area,0)/L.length, rbar=Math.sqrt(area/Math.PI);
+  const R=Math.sqrt(C.bIn*area/(Math.PI*state.phi))+rbar*0.3;
+  const dil=C.bOut*area/0.14+C.cOut*C.per*MONOMER*CHAIN_W*6;
+  const V=Math.max(R*1.22+8, Math.sqrt((dil+Math.PI*(1.12*R+rbar)**2)/4));
+  const prot=[];
+  for(let i=0;i<C.bIn;i++){ const a=rnd()*6.2832, t=Math.sqrt(rnd())*(R-rbar*0.8); prot.push({x:t*Math.cos(a),y:t*Math.sin(a),o:(rnd()*L.length)|0,out:false}); }
+  for(let it=0;it<120;it++){ for(let i=0;i<prot.length;i++) for(let j=i+1;j<prot.length;j++){ const A=prot[i], B=prot[j];
+      const dx=B.x-A.x, dy=B.y-A.y, d=Math.hypot(dx,dy)||0.01, m=0.8*(L[A.o].r+L[B.o].r);
+      if(d<m){ const k=(m-d)/d*0.5; A.x-=dx*k; A.y-=dy*k; B.x+=dx*k; B.y+=dy*k; } }
+    for(const A of prot){ const d=Math.hypot(A.x,A.y), lim=R-L[A.o].r*0.75; if(d>lim){ A.x*=lim/d; A.y*=lim/d; } } }
+  for(let i=0;i<C.bOut;i++){ let best=null;
+    for(let t=0;t<60;t++){ const o=(rnd()*L.length)|0, rr=L[o].r, x=(rnd()*2-1)*(V-rr), y=(rnd()*2-1)*(V-rr);
+      if(Math.hypot(x,y)<R+rr*1.3) continue;
+      const clash=prot.some(p=>Math.hypot(p.x-x,p.y-y)<(L[p.o].r+rr)*0.9);
+      best={x,y,o,out:true}; if(!clash) break; }
+    if(best) prot.push(best); }
+  // spatial buckets for distance-to-protein queries
+  const cell=2*Math.max(...L.map(o=>o.r))+20, grid=new Map(), key=(i,j)=>i*100003+j;
+  prot.forEach(p=>{ const k=key(Math.floor(p.x/cell),Math.floor(p.y/cell)); (grid.get(k)||grid.set(k,[]).get(k)).push(p); });
+  const protDist=(x,y)=>{ let best=99; const ci=Math.floor(x/cell), cj=Math.floor(y/cell);
+    for(let a=-1;a<=1;a++) for(let b=-1;b<=1;b++) for(const p of grid.get(key(ci+a,cj+b))||[]){ const o=L[p.o];
+      const d=bil(o.sdf,o.nx,o.ny,(x-p.x-o.ox)/o.h,(y-p.y-o.oy)/o.h); if(!isNaN(d)&&d<best) best=d; }
+    return best; };
+  const sb=Math.sqrt(2*MONOMER/state.lp);
+  const walk=(inside)=>{
+    const energy=(x,y)=>{ const d0=Math.hypot(x,y); let E=0;
+      if(inside){ if(d0>R+4) return Infinity; if(d0>R-8) E+=(d0-R+8)*0.5; }
+      else { if(d0<R+14||Math.abs(x)>V-6||Math.abs(y)>V-6) return Infinity; }
+      const d=protDist(x,y); if(d<0) E+=1.2+(-d)*0.15; else if(inside&&d<7) E-=1.3;
+      return E; };
+    let x,y,e=Infinity;
+    for(let t=0;t<40&&e>0.5;t++){ const a=rnd()*6.2832, rr=Math.sqrt(rnd())*(R-10);
+      const cx=inside?rr*Math.cos(a):(rnd()*2-1)*V, cy=inside?rr*Math.sin(a):(rnd()*2-1)*V, ce=energy(cx,cy); if(ce<e){ x=cx; y=cy; e=ce; } }
+    if(e===Infinity) return null;
+    const pts=[x,y]; let th=rnd()*6.2832;
+    for(let s=1;s<C.per;s++){ const cand=[], wts=[]; let tot=0;
+      for(let k=0;k<10;k++){ const t=th+gauss(rnd)*sb, nx=x+MONOMER*Math.cos(t), ny=y+MONOMER*Math.sin(t), wgt=Math.exp(-energy(nx,ny)); cand.push([t,nx,ny]); wts.push(wgt); tot+=wgt; }
+      if(tot<=0){ th+=Math.PI; continue; }
+      let pick=rnd()*tot, k=0; while(pick>wts[k]){ pick-=wts[k]; k++; }
+      [th,x,y]=cand[Math.min(k,9)]; pts.push(x,y); }
+    return pts; };
+  const chains=[];
+  for(let i=0;i<C.cIn;i++){ const c=walk(true); if(c) chains.push(c); }
+  for(let i=0;i<C.cOut;i++){ const c=walk(false); if(c) chains.push(c); }
+  return {R,V,prot,chains,C};
+}
+function draw2d(){
+  const cv=$("c2d"), dpr=Math.min(2,devicePixelRatio||1), S=Math.round(cv.clientWidth*dpr); if(!S) return;
+  if(cv.width!==S){ cv.width=S; cv.height=S; }
+  const k=[state.res,state.nbsa,state.ratio,state.zb,state.clen,state.lp,state.phi,state.excess,state.seed,P.n].join();
+  if(coac.key!==k){ coac.layout=layout(); coac.key=k; }
+  const Lo=coac.layout, s=S/(2*Lo.V), X=x=>(x+Lo.V)*s, Y=y=>(Lo.V-y)*s;
+  const bk=[state.res,s.toFixed(4)].join();
+  if(coac.bakeKey!==bk){ coac.baked=projections(state.res).map(o=>bake(o,s)); coac.bakeKey=bk; coac.sprites=[]; }
+  coac.sprites=coac.baked.map((b,i)=>colourise(b,coac.sprites[i]||document.createElement("canvas")));
+  const ctx=cv.getContext("2d"), bg=hex($("c-bg").value), cb=hex($("c-bsa").value), css=c=>`rgb(${c.map(v=>Math.round(v*255)).join(",")})`;
+  ctx.fillStyle=css(bg); ctx.fillRect(0,0,S,S);
+  if(state.tint){ const t=bg.map((v,i)=>v*0.92+cb[i]*0.08), g=ctx.createRadialGradient(X(0),Y(0),Lo.R*s*0.9,X(0),Y(0),(Lo.R+12)*s);
+    g.addColorStop(0,css(t)); g.addColorStop(1,css(bg)); ctx.fillStyle=g; ctx.beginPath(); ctx.arc(X(0),Y(0),(Lo.R+12)*s,0,6.2832); ctx.fill(); }
+  for(const p of Lo.prot){ const sp=coac.sprites[p.o]; ctx.drawImage(sp, Math.round(X(p.x)-sp.ax), Math.round(Y(p.y)-sp.ay)); }
+  const pc=hex($("c-pdda").value), lc=$("c-line").value, t=CHAIN_W*s, fl=state.flat;
+  ctx.lineCap="round"; ctx.lineJoin="round";
+  for(const c of Lo.chains){ ctx.beginPath(); ctx.moveTo(X(c[0]),Y(c[1])); for(let i=2;i<c.length;i+=2) ctx.lineTo(X(c[i]),Y(c[i+1]));
+    if(state.ow>0){ ctx.strokeStyle=lc; ctx.lineWidth=t+2*state.ow*dpr; ctx.stroke(); }
+    ctx.strokeStyle=css(pc.map(v=>v*(0.85+0.1*fl))); ctx.lineWidth=t; ctx.stroke();
+    if(fl<1){ ctx.save(); ctx.translate(-t*0.16,-t*0.16); ctx.strokeStyle=css(pc.map(v=>Math.min(1,v+(1-v)*0.5))); ctx.globalAlpha=0.8*(1-fl); ctx.lineWidth=t*0.32; ctx.stroke(); ctx.restore(); } }
+  const C=Lo.C, f=v=>v.toFixed(2);
+  $("stats").innerHTML=`Charge ratio +/− = ${f(C.r)}<br>PDDA: ${C.M} monomers in ${C.nc} chains of ~${C.per}<br>Droplet: ${Lo.prot.filter(p=>!p.out).length} BSA, ${C.cIn} chains<br>Dilute phase: ${C.bOut} BSA, ${C.cOut} chains<br>Droplet diameter ≈ ${Math.round(Lo.R/5)} nm`;
+}
+
+// ---------- UI ----------
+function labels(){
+  const c=scene==="single";
+  $("res-v").textContent=state.res.toFixed(1)+" Å"; $("flat-v").textContent=state.flat.toFixed(2); $("ao-v").textContent=state.ao.toFixed(2); $("ow-v").textContent=state.ow+" px";
+  $("nbsa-v").textContent=state.nbsa; $("zb-v").textContent="−"+state.zb; $("clen-v").textContent=state.clen+" monomers";
+  $("lp-v").textContent=(state.lp/10).toFixed(1)+" nm"; $("phi-v").textContent=state.phi.toFixed(2);
+  const r=Math.pow(2,state.ratio); $("ratio-v").textContent=r>=1?`${r.toFixed(2)} : 1`:`1 : ${(1/r).toFixed(2)}`;
+  $("g-coac").hidden=c; $("sw-pdda").hidden=c; $("dom-wrap").hidden=!c; $("dom-cols").hidden=!(c&&state.dom); $("g-view").hidden=!c;
+  $("gl").hidden=!c; $("c2d").hidden=c;
+  $("hint").textContent=c ? "Drag to rotate, scroll to zoom, arrow keys also rotate. To save the picture, right-click it and choose \"Save image as\"."
+                          : "Flat 2D scene: each BSA is a projection of the real 3D shape seen from a random direction. To save it, right-click the picture and choose \"Save image as\".";
+}
+let raf=0, needMesh=true, needLayout=true;
+function frame(){ cancelAnimationFrame(raf); raf=requestAnimationFrame(render); }
+function render(){
+  labels(); if(!P) return;
+  const slow=(scene==="single"&&needMesh)||(scene!=="single"&&!lib.has(state.res));
+  if(slow){ $("busy").hidden=false; $("busy").textContent="building…"; setTimeout(render2,20); } else render2();
+}
+function render2(){
+  try{
+    if(scene==="single"){ if(!scene3d.gl&&!initGL()) return; if(needMesh||!scene3d.mesh){ uploadMesh(buildMesh()); needMesh=false; } draw3d(); }
+    else draw2d();
+    $("busy").hidden=true;
+  }catch(e){ $("busy").hidden=false; $("busy").textContent="Could not draw: "+(e.message||e); console.error(e); }
+}
+function bind(){
+  const num=(id,k,after)=>$(id).addEventListener("input",e=>{ state[k]=parseFloat(e.target.value); if(after) after(); frame(); });
+  num("res","res",()=>needMesh=true); num("flat","flat"); num("ao","ao"); num("ow","ow");
+  for(const k of ["nbsa","ratio","zb","clen","lp","phi"]) num(k,k);
+  for(const k of ["dom","excess","tint"]) $(k).addEventListener("change",e=>{ state[k]=e.target.checked; frame(); });
+  $("spin").addEventListener("change",e=>{ state.spin=e.target.checked; requestAnimationFrame(spinLoop); });
+  for(const id of ["c-bsa","c-pdda","c-line","c-bg","c-d1","c-d2","c-d3"]) $(id).addEventListener("input",frame);
+  $("reseed").onclick=()=>{ state.seed++; frame(); };
+  $("reset").onclick=()=>{ scene3d.rot=[1,0,0,0,1,0,0,0,1]; scene3d.zoom=1; frame(); };
+  $("tab-single").onclick=()=>setScene("single"); $("tab-coac").onclick=()=>setScene("coacervate");
+  addEventListener("resize",frame);
+  for(const id of ["file-drop","file-panel"]) $(id).addEventListener("change",e=>{ if(e.target.files[0]) readFile(e.target.files[0]); e.target.value=""; });
+  const z=$("stage");
+  z.addEventListener("dragover",e=>{ e.preventDefault(); $("load").classList.add("over"); });
+  z.addEventListener("dragleave",()=>$("load").classList.remove("over"));
+  z.addEventListener("drop",e=>{ e.preventDefault(); $("load").classList.remove("over"); const f=e.dataTransfer.files[0]; if(f) readFile(f); });
+}
+function setScene(s){ scene=s; $("tab-single").setAttribute("aria-pressed",s==="single"); $("tab-coac").setAttribute("aria-pressed",s!=="single");
+  if(s==="single"&&state.spin) requestAnimationFrame(spinLoop); frame(); }
+function readFile(file){
+  const fr=new FileReader();
+  fr.onload=()=>{ try{ const t=String(fr.result), res=/^data_|_atom_site\./m.test(t)?parseCIF(t):parsePDB(t);
+      setStructure(res,file.name.replace(/\.[^.]+$/,"")); needMesh=true; coac.key=""; coac.bakeKey="";
+      try{ localStorage.setItem("bss-ca",JSON.stringify({label:P.label,res})); }catch(e){}
+      $("load").hidden=true; frame(); }
+    catch(e){ $("load").hidden=false; $("load-msg").textContent="That file has no readable protein Cα atoms. Use a PDB or mmCIF file such as 4F5S."; } };
+  fr.readAsText(file);
+}
+
+bind(); labels();
+(function boot(){
+  if(EMBEDDED.length){ setStructure(EMBEDDED,"PDB 4F5S chain A"); frame(); return; }
+  try{ const s=JSON.parse(localStorage.getItem("bss-ca")||"null"); if(s&&s.res){ setStructure(s.res,s.label); frame(); return; } }catch(e){}
+  $("load").hidden=false;
+})();
+</script>
