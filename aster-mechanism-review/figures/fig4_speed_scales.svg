@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 500" width="960" height="500" font-family="'WenQuanYi Zen Hei','Noto Sans CJK SC','PingFang SC','Microsoft YaHei',sans-serif"><title>图4 速度数量级对比</title><style>text{font-family:'WenQuanYi Zen Hei','Noto Sans CJK SC','PingFang SC','Microsoft YaHei',sans-serif;fill:#1f2933;}.h{font-weight:700;} .mut{fill:#52606d;} .halo{paint-order:stroke;stroke:#ffffff;stroke-width:4px;stroke-linejoin:round;}</style><defs><marker id="ah-k" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="5.5" markerHeight="5.5" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1f2933"/></marker><marker id="ah-b" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="5.5" markerHeight="5.5" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#2563eb"/></marker><marker id="ah-r" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="5.5" markerHeight="5.5" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#dc2626"/></marker><marker id="ah-g" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="5.5" markerHeight="5.5" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#059669"/></marker><marker id="ah-p" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="5.5" markerHeight="5.5" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#7c3aed"/></marker><marker id="ah-o" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="5.5" markerHeight="5.5" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#ea8a00"/></marker><marker id="ah-m" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="5.5" markerHeight="5.5" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#52606d"/></marker><marker id="ah-lb" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="5.5" markerHeight="5.5" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#60a5fa"/></marker><radialGradient id="haloSrc"><stop offset="0" stop-color="#f472b6" stop-opacity="0.55"/><stop offset="1" stop-color="#f472b6" stop-opacity="0"/></radialGradient><radialGradient id="warm"><stop offset="0" stop-color="#f87171" stop-opacity="0.6"/><stop offset="1" stop-color="#f87171" stop-opacity="0"/></radialGradient><radialGradient id="glow"><stop offset="0" stop-color="#fde047" stop-opacity="0.8"/><stop offset="1" stop-color="#fde047" stop-opacity="0"/></radialGradient></defs><rect x="0" y="0" width="960" height="500" fill="#ffffff"/><text x="20" y="30" font-size="18" text-anchor="start" font-weight="700">图4  速度数量级：扩散泳估算 vs 草稿实测的宏观运动 vs 界面张力驱动估算</text>
+<line x1="330.0" y1="60" x2="330.0" y2="392" stroke="#e2e8f0" stroke-width="1"/>
+<text x="330.0" y="410" font-size="11" text-anchor="middle" fill="#52606d">10 nm/s</text>
+<line x1="415.7142857142857" y1="60" x2="415.7142857142857" y2="392" stroke="#e2e8f0" stroke-width="1"/>
+<text x="415.7142857142857" y="410" font-size="11" text-anchor="middle" fill="#52606d">0.1 μm/s</text>
+<line x1="501.42857142857144" y1="60" x2="501.42857142857144" y2="392" stroke="#e2e8f0" stroke-width="1"/>
+<text x="501.42857142857144" y="410" font-size="11" text-anchor="middle" fill="#52606d">1 μm/s</text>
+<line x1="587.1428571428571" y1="60" x2="587.1428571428571" y2="392" stroke="#e2e8f0" stroke-width="1"/>
+<text x="587.1428571428571" y="410" font-size="11" text-anchor="middle" fill="#52606d">10 μm/s</text>
+<line x1="672.8571428571429" y1="60" x2="672.8571428571429" y2="392" stroke="#e2e8f0" stroke-width="1"/>
+<text x="672.8571428571429" y="410" font-size="11" text-anchor="middle" fill="#52606d">0.1 mm/s</text>
+<line x1="758.5714285714286" y1="60" x2="758.5714285714286" y2="392" stroke="#e2e8f0" stroke-width="1"/>
+<text x="758.5714285714286" y="410" font-size="11" text-anchor="middle" fill="#52606d">1 mm/s</text>
+<line x1="844.2857142857142" y1="60" x2="844.2857142857142" y2="392" stroke="#e2e8f0" stroke-width="1"/>
+<text x="844.2857142857142" y="410" font-size="11" text-anchor="middle" fill="#52606d">1 cm/s</text>
+<line x1="930.0" y1="60" x2="930.0" y2="392" stroke="#e2e8f0" stroke-width="1"/>
+<text x="930.0" y="410" font-size="11" text-anchor="middle" fill="#52606d">10 cm/s</text>
+<line x1="330" y1="392" x2="930" y2="392" stroke="#1f2933" stroke-width="1.2"/>
+<rect x="561.3402860859444" y="60" width="77.40771317073813" height="332" rx="0" fill="#fef3c7" stroke="none" stroke-width="1.2" opacity="0.7"/>
+<text x="600.0441426713135" y="74" font-size="11" text-anchor="middle" fill="#92400e">空档</text>
+<text x="20" y="95" font-size="13" text-anchor="start" font-weight="700" fill="#2563eb">扩散泳理论估算</text>
+<text x="20" y="111" font-size="11" text-anchor="start" fill="#52606d">|ζ|≈40 mV，∇ln c ≈ 1/(10–100 μm)</text>
+<rect x="415.7142857142857" y="91" width="145.62600037165868" height="14" rx="7" fill="#2563eb" stroke="none" stroke-width="1.2" opacity="0.85"/>
+<text x="20" y="141" font-size="13" text-anchor="start" font-weight="700" fill="#64748b">草稿图3h 微珠位移</text>
+<text x="20" y="157" font-size="11" text-anchor="start" fill="#52606d">按图中位移/时间粗估</text>
+<rect x="407.407713170738" y="137" width="49.202680090947354" height="14" rx="7" fill="#64748b" stroke="none" stroke-width="1.2" opacity="0.85"/>
+<text x="20" y="187" font-size="13" text-anchor="start" font-weight="700" fill="#7c3aed">草稿图4c UV 液柱</text>
+<text x="20" y="203" font-size="11" text-anchor="start" fill="#52606d">2.4 cm / 450 s</text>
+<circle cx="649.2236459657819" cy="190" r="7" fill="#7c3aed" stroke="white" stroke-width="1.5"/>
+<text x="20" y="233" font-size="13" text-anchor="start" font-weight="700" fill="#1f2933">草稿图4b,e 群落运动</text>
+<text x="20" y="249" font-size="11" text-anchor="start" fill="#52606d">轨迹长度 / 时间色标粗估</text>
+<rect x="732.7688575145158" y="229" width="51.60514211382531" height="14" rx="7" fill="#1f2933" stroke="none" stroke-width="1.2" opacity="0.85"/>
+<text x="20" y="279" font-size="13" text-anchor="start" font-weight="700" fill="#ea8a00">草稿图4f Vis 液柱</text>
+<text x="20" y="295" font-size="11" text-anchor="start" fill="#52606d">3.3 cm / 34 s</text>
+<circle cx="757.437577222821" cy="282" r="7" fill="#ea8a00" stroke="white" stroke-width="1.5"/>
+<text x="20" y="325" font-size="13" text-anchor="start" font-weight="700" fill="#059669">Marangoni 表面流估算</text>
+<text x="20" y="341" font-size="11" text-anchor="start" fill="#52606d">Δγ = 0.01–0.1 mN/m，h≈3 mm，L≈1 cm</text>
+<rect x="750.2648560278808" y="321" width="85.71428571428578" height="14" rx="7" fill="#059669" stroke="none" stroke-width="1.2" opacity="0.85"/>
+<text x="20" y="371" font-size="13" text-anchor="start" font-weight="700" fill="#059669">毛细压差液柱估算</text>
+<text x="20" y="387" font-size="11" text-anchor="start" fill="#52606d">Δγ = 0.001–0.1 mN/m，r≈1.5 mm，ℓ≈2 cm</text>
+<rect x="612.9454281997698" y="367" width="171.42857142857133" height="14" rx="7" fill="#059669" stroke="none" stroke-width="1.2" opacity="0.85"/>
+<text x="20" y="438" font-size="12" text-anchor="start">宏观运动（~mm/s）比扩散泳（~0.1–数 μm/s）快 2–4 个数量级，而界面张力梯度只需 0.01–0.1 mN/m 的差值即可给出正确量级。</text>
+<text x="20" y="457" font-size="12" text-anchor="start">离子梯度靠扩散建立的时间 t ≈ L²/2D（D ≈ 0.6×10⁻⁹ m²/s）：L = 100 μm → 8 s；1 mm → 14 min；1 cm → 约 23 h。</text>
+<text x="20" y="476" font-size="12" text-anchor="start">远处群落在数秒内即响应，只能由界面应力/流体动力学传递，而不是由离子梯度本身传递。</text></svg>

@@ -1,0 +1,85 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 760" width="960" height="760" font-family="'WenQuanYi Zen Hei','Noto Sans CJK SC','PingFang SC','Microsoft YaHei',sans-serif"><title>图6 我认为的力的来源（一）</title><style>text{font-family:'WenQuanYi Zen Hei','Noto Sans CJK SC','PingFang SC','Microsoft YaHei',sans-serif;fill:#1f2933;}.h{font-weight:700;} .mut{fill:#52606d;} .halo{paint-order:stroke;stroke:#ffffff;stroke-width:4px;stroke-linejoin:round;}</style><defs><marker id="ah-k" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="5.5" markerHeight="5.5" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1f2933"/></marker><marker id="ah-b" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="5.5" markerHeight="5.5" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#2563eb"/></marker><marker id="ah-r" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="5.5" markerHeight="5.5" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#dc2626"/></marker><marker id="ah-g" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="5.5" markerHeight="5.5" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#059669"/></marker><marker id="ah-p" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="5.5" markerHeight="5.5" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#7c3aed"/></marker><marker id="ah-o" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="5.5" markerHeight="5.5" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#ea8a00"/></marker><marker id="ah-m" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="5.5" markerHeight="5.5" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#52606d"/></marker><marker id="ah-lb" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="5.5" markerHeight="5.5" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#60a5fa"/></marker><radialGradient id="haloSrc"><stop offset="0" stop-color="#f472b6" stop-opacity="0.55"/><stop offset="1" stop-color="#f472b6" stop-opacity="0"/></radialGradient><radialGradient id="warm"><stop offset="0" stop-color="#f87171" stop-opacity="0.6"/><stop offset="1" stop-color="#f87171" stop-opacity="0"/></radialGradient><radialGradient id="glow"><stop offset="0" stop-color="#fde047" stop-opacity="0.8"/><stop offset="1" stop-color="#fde047" stop-opacity="0"/></radialGradient></defs><rect x="0" y="0" width="960" height="760" fill="#ffffff"/><text x="20" y="30" font-size="18" text-anchor="start" font-weight="700">图6  我认为的“力”的来源（一）：光只改变化学势；推力来自接触式生长，收缩不能产生拉力</text>
+<text x="20" y="62" font-size="14" text-anchor="start" font-weight="700">(a) 能量链：光是“充电器”，真正做功的是过饱和反式单体的组装自由能</text>
+<rect x="16" y="76" width="146" height="72" rx="8" fill="#ede9fe" stroke="#a78bfa" stroke-width="1.2"/>
+<text x="89.0" y="107.91999999999999" font-size="12" text-anchor="middle">UV 光子</text>
+<text x="89.0" y="124.71999999999998" font-size="12" text-anchor="middle">≈ 3.4 eV</text>
+<line x1="163" y1="112" x2="171" y2="112" stroke="#1f2933" stroke-width="1.6" marker-end="url(#ah-k)"/>
+<rect x="172" y="76" width="146" height="72" rx="8" fill="#ede9fe" stroke="#a78bfa" stroke-width="1.2"/>
+<text x="245.0" y="99.52000000000001" font-size="12" text-anchor="middle">trans → cis</text>
+<text x="245.0" y="116.32000000000001" font-size="12" text-anchor="middle">储能 ≈ 0.5 eV/分子</text>
+<text x="245.0" y="133.12" font-size="12" text-anchor="middle">(≈ 50 kJ/mol)</text>
+<line x1="319" y1="112" x2="327" y2="112" stroke="#1f2933" stroke-width="1.6" marker-end="url(#ah-k)"/>
+<rect x="328" y="76" width="146" height="72" rx="8" fill="#fce7f3" stroke="#f9a8d4" stroke-width="1.2"/>
+<text x="401.0" y="99.52000000000001" font-size="12" text-anchor="middle">cis 可溶</text>
+<text x="401.0" y="116.32000000000001" font-size="12" text-anchor="middle">延伸丝溶解</text>
+<text x="401.0" y="133.12" font-size="12" text-anchor="middle">（能量存于溶液）</text>
+<line x1="475" y1="112" x2="483" y2="112" stroke="#1f2933" stroke-width="1.6" marker-end="url(#ah-k)"/>
+<rect x="484" y="76" width="146" height="72" rx="8" fill="#ffedd5" stroke="#fdba74" stroke-width="1.2"/>
+<text x="557.0" y="107.91999999999999" font-size="12" text-anchor="middle">Vis 光子 / 热</text>
+<text x="557.0" y="124.71999999999998" font-size="12" text-anchor="middle">cis → trans</text>
+<line x1="631" y1="112" x2="639" y2="112" stroke="#1f2933" stroke-width="1.6" marker-end="url(#ah-k)"/>
+<rect x="640" y="76" width="146" height="72" rx="8" fill="#ffedd5" stroke="#fdba74" stroke-width="1.2"/>
+<text x="713.0" y="107.91999999999999" font-size="12" text-anchor="middle">反式单体过饱和</text>
+<text x="713.0" y="124.71999999999998" font-size="12" text-anchor="middle">S = c / c_eq</text>
+<line x1="787" y1="112" x2="795" y2="112" stroke="#1f2933" stroke-width="1.6" marker-end="url(#ah-k)"/>
+<rect x="796" y="76" width="146" height="72" rx="8" fill="#dcfce7" stroke="#86efac" stroke-width="1.2"/>
+<text x="869.0" y="99.52000000000001" font-size="12" text-anchor="middle">组装自由能</text>
+<text x="869.0" y="116.32000000000001" font-size="12" text-anchor="middle">Δμ = kT ln S</text>
+<text x="869.0" y="133.12" font-size="12" text-anchor="middle">仅“生长＋接触”时做功</text>
+<text x="20" y="172" font-size="12" text-anchor="start" fill="#52606d">类比：cis 异构体扮演 GTP-微管蛋白中“化学燃料”的角色；光并不直接“推”东西，而是把体系泵到非平衡的化学势。</text>
+<rect x="16" y="190" width="456" height="270" rx="10" fill="#f0fdf4" stroke="#86efac" stroke-width="1.2"/>
+<text x="28" y="214" font-size="14" text-anchor="start" font-weight="700">(b) 生长推力：原理上成立（结晶压 / 聚合棘轮）</text>
+<polygon points="40.0,297.0 300.0,302.0 300.0,318.0 40.0,323.0" fill="#86efac" stroke="#16a34a" stroke-width="1.2"/>
+<circle cx="337" cy="310" r="34" fill="#e2e8f0" stroke="#475569" stroke-width="1.5"/>
+<rect x="300" y="300" width="4" height="20" rx="1" fill="#bae6fd" stroke="none" stroke-width="1.2"/>
+<g transform="translate(282,270) rotate(20) scale(0.8)"><polyline points="-8,4 -2,-3 4,3 9,-4" fill="none" stroke="#6b7280" stroke-width="2" stroke-linejoin="round"/><circle cx="9" cy="-4" r="2.8" fill="#eab308" stroke="#a16207" stroke-width="0.6"/></g>
+<g transform="translate(318,264) rotate(-30) scale(0.8)"><polyline points="-8,4 -2,-3 4,3 9,-4" fill="none" stroke="#6b7280" stroke-width="2" stroke-linejoin="round"/><circle cx="9" cy="-4" r="2.8" fill="#eab308" stroke="#a16207" stroke-width="0.6"/></g>
+<g transform="translate(268,350) rotate(10) scale(0.8)"><polyline points="-8,4 -2,-3 4,3 9,-4" fill="none" stroke="#6b7280" stroke-width="2" stroke-linejoin="round"/><circle cx="9" cy="-4" r="2.8" fill="#eab308" stroke="#a16207" stroke-width="0.6"/></g>
+<g transform="translate(312,358) rotate(40) scale(0.8)"><polyline points="-8,4 -2,-3 4,3 9,-4" fill="none" stroke="#6b7280" stroke-width="2" stroke-linejoin="round"/><circle cx="9" cy="-4" r="2.8" fill="#eab308" stroke="#a16207" stroke-width="0.6"/></g>
+<line x1="372" y1="310" x2="426" y2="310" stroke="#059669" stroke-width="3" marker-end="url(#ah-g)"/>
+<text x="398" y="298" font-size="14" text-anchor="middle" font-weight="700" fill="#059669">F</text>
+<text x="302" y="386" font-size="11" text-anchor="middle" fill="#52606d">尖端与物体间须保持液膜以供料</text>
+<text x="32" y="414.0" font-size="12" text-anchor="start">热力学上限：F ≤ A · (kT/Ω) · ln S （A 为接触面积，Ω 为分子体积）</text>
+<text x="32" y="431.4" font-size="12" text-anchor="start">条件：① Vis 下持续过饱和；② 纤维尖端与物体接触；③ 供料不被堵死。</text>
+<text x="446" y="236" font-size="22" text-anchor="end" font-weight="700" fill="#059669">✓</text>
+<rect x="488" y="190" width="456" height="270" rx="10" fill="#fef2f2" stroke="#fca5a5" stroke-width="1.2"/>
+<text x="500" y="214" font-size="14" text-anchor="start" font-weight="700">(c) 收缩拉力：缺少偶联器，不成立</text>
+<polygon points="512.0,287.0 680.0,291.0 680.0,309.0 512.0,313.0" fill="#86efac" stroke="#16a34a" stroke-width="1.2"/>
+<polygon points="680.0,291.0 772.0,293.0 772.0,307.0 680.0,309.0" fill="none" stroke="#16a34a" stroke-width="1.2" stroke-dasharray="4 3"/>
+<circle cx="808" cy="300" r="34" fill="#e2e8f0" stroke="#475569" stroke-width="1.5"/>
+<g transform="translate(700,268) rotate(20) scale(0.8)"><polyline points="-8,4 -2,-3 4,3 9,-4" fill="none" stroke="#6b7280" stroke-width="2" stroke-linejoin="round"/><circle cx="9" cy="-4" r="2.8" fill="#eab308" stroke="#a16207" stroke-width="0.6"/></g>
+<g transform="translate(735,330) rotate(-30) scale(0.8)"><polyline points="-8,4 -2,-3 4,3 9,-4" fill="none" stroke="#6b7280" stroke-width="2" stroke-linejoin="round"/><circle cx="9" cy="-4" r="2.8" fill="#eab308" stroke="#a16207" stroke-width="0.6"/></g>
+<g transform="translate(760,262) rotate(10) scale(0.8)"><polyline points="-8,4 -2,-3 4,3 9,-4" fill="none" stroke="#6b7280" stroke-width="2" stroke-linejoin="round"/><circle cx="9" cy="-4" r="2.8" fill="#eab308" stroke="#a16207" stroke-width="0.6"/></g>
+<g transform="translate(716,340) rotate(40) scale(0.8)"><polyline points="-8,4 -2,-3 4,3 9,-4" fill="none" stroke="#6b7280" stroke-width="2" stroke-linejoin="round"/><circle cx="9" cy="-4" r="2.8" fill="#eab308" stroke="#a16207" stroke-width="0.6"/></g>
+<circle cx="748" cy="280" r="4.5" fill="#ec4899" stroke="#9d174d" stroke-width="0.8"/>
+<circle cx="700" cy="322" r="4.5" fill="#ec4899" stroke="#9d174d" stroke-width="0.8"/>
+<line x1="676" y1="356" x2="626" y2="356" stroke="#1f2933" stroke-width="1.8" marker-end="url(#ah-k)"/>
+<text x="512" y="380" font-size="12" text-anchor="start" fill="#dc2626">UV：尖端溶解后退，与物体脱离 → 无拉力</text>
+<text x="918" y="236" font-size="22" text-anchor="end" font-weight="700" fill="#dc2626">✗</text>
+<rect x="512" y="396" width="416" height="54" rx="6" fill="#ffffff" stroke="#e5e7eb" stroke-width="1.2"/>
+<rect x="530" y="416" width="150" height="14" rx="3" fill="#fde68a" stroke="#c08a1a" stroke-width="1.2"/>
+<ellipse cx="672" cy="423" rx="7" ry="16" fill="none" stroke="#2563eb" stroke-width="3"/>
+<line x1="700" y1="423" x2="740" y2="423" stroke="#2563eb" stroke-width="2" marker-end="url(#ah-b)"/>
+<text x="748" y="418" font-size="11" text-anchor="start">生物：Dam1 环 / Ndc80 在解聚端</text>
+<text x="748" y="433" font-size="11" text-anchor="start">偏置扩散 → 仍保持结合并被拉动</text>
+<rect x="16" y="476" width="928" height="270" rx="10" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.2"/>
+<text x="28" y="500" font-size="14" text-anchor="start" font-weight="700">(d) 表观“从尖端收缩”：由粗细梯度决定的溶解次序，而非微管式端部特异解聚</text>
+<circle cx="64" cy="614" r="26" fill="#facc15" stroke="#ca8a04" stroke-width="1.2"/>
+<polygon points="90.0,543.0 560.0,553.0 560.0,559.0 90.0,569.0" fill="#86efac" stroke="#16a34a" stroke-width="1.2"/>
+<text x="80" y="561" font-size="12" text-anchor="end" font-weight="700">t₀</text>
+<polygon points="90.0,601.0 470.0,609.1 470.0,618.9 90.0,627.0" fill="#86efac" stroke="#16a34a" stroke-width="1.2"/>
+<polygon points="470.0,609.1 560.0,611.0 560.0,617.0 470.0,618.9" fill="none" stroke="#16a34a" stroke-width="1.2" stroke-dasharray="4 3" opacity="0.6"/>
+<text x="80" y="619" font-size="12" text-anchor="end" font-weight="700">t₁</text>
+<polygon points="90.0,659.0 370.0,665.0 370.0,679.0 90.0,685.0" fill="#86efac" stroke="#16a34a" stroke-width="1.2"/>
+<polygon points="370.0,665.0 560.0,669.0 560.0,675.0 370.0,679.0" fill="none" stroke="#16a34a" stroke-width="1.2" stroke-dasharray="4 3" opacity="0.6"/>
+<text x="80" y="677" font-size="12" text-anchor="end" font-weight="700">t₂</text>
+<text x="96" y="530" font-size="11" text-anchor="start" fill="#52606d">根部 ≈ 700 nm 高</text>
+<text x="560" y="530" font-size="11" text-anchor="end" fill="#52606d">尖端 ≈ 160 nm 高</text>
+<text x="596" y="530" font-size="12" text-anchor="start">• 草稿 AFM：延伸丝高度由 700 nm 渐减至 160 nm；</text>
+<text x="596" y="552" font-size="12" text-anchor="start">  细端比表面积大、曲率溶解度高（Gibbs–Thomson），</text>
+<text x="596" y="574" font-size="12" text-anchor="start">  在同样光照下最先溶完 → 看起来像“尖端收缩”。</text>
+<text x="596" y="596" font-size="12" text-anchor="start">• 紧密层状堆积中顺反异构受空间限制，</text>
+<text x="596" y="618" font-size="12" text-anchor="start">  异构化主要发生在表面与缺陷处，溶解是表面控制的。</text>
+<text x="596" y="640" font-size="12" text-anchor="start">• 可检验预测：截断纤维的两端应同时后退；</text>
+<text x="596" y="662" font-size="12" text-anchor="start">  收缩速率 ∝ 局部光强 × 比表面积，</text>
+<text x="596" y="684" font-size="12" text-anchor="start">  与“哪一端”无关（微管则强烈依赖正/负端）。</text></svg>
