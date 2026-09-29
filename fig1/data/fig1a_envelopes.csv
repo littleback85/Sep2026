@@ -1,0 +1,9 @@
+key,label,tier,held_dispersion_required,from_dataset_ids,vol_lo_L,vol_hi_L,life_lo_s,life_hi_s,evidence,note
+bare,Bare coacervates,emerging,yes,P1;P2;P4,,,,,Typical practice (verify),Envelope over dataset rows P1 P2 P4 (protein condensates; protocells/microreactors; microfluidic droplets). Hosts extraction / microreactor / sensing / delivery / protocell studies.
+membranized,Membranized coacervates,emerging,yes,P3,,,,,Typical practice (verify),Envelope over dataset row P3 (lipid / fatty-acid / terpolymer / particle / protein-cage / CAP coatings).
+adhesive,Wet adhesives,pre-industrial,no,,1e-3,1,10,3600,PLACEHOLDER - not in dataset,Complex-coacervate underwater adhesives; used as a bulk dense phase that sets on application. Add rows + refs to the dataset (Stewart; Waite; Hwang/Zhao).
+bioprocess,ELP / ATPS extraction,bioprocess,no,B1;A1,,,,,Typical practice (verify),Envelope over B1 and A1; dispersion designed to settle (ATPS is segregative - footnote).
+capsule,Microencapsulation,industrial,no,I2,,,,,Chemistry verified; scale typical (verify),Liquid coacervate exists only until gelled and crosslinked.
+haircare,Hair care,industrial,no,I1,,,,,Mechanism verified; scale typical (verify),Coacervate forms on dilution at the point of use and deposits.
+natchem,CAP (Nat. Chem. 2025),emerging,yes,,1e-3,1e-3,1e6,1e6,PLACEHOLDER - use your largest batch and longest storage,Point for the authors' previous CAP paper.
+thiswork,This work,this work,yes,,5,100,1e6,1e7,PLACEHOLDER - manuscript says 5-10 L; conversation said 100 L,Replace with batch volume made and characterized and storage time with unchanged size distribution (Fig. 5).
