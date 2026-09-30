@@ -1,0 +1,43 @@
+<h1>Fig. 5: focus, logic and editorial choices</h1>
+
+<h2>The one message</h2>
+<p>The phantom cage is exactly harmonic, with no free parameter, up to Δ* ≈ 2.6σ<sub><i>i</i></sub> (<i>U</i>* ≈ 3.5 <i>k</i><sub>B</sub><i>T</i>) in every network we measured. Beyond that point junctions move together with their neighbourhood. This cooperative mode starts at the same place in every condition and is insensitive to swelling. Its weight is set by strand length and by temperature. Everything in the figure either establishes this claim or protects it against the obvious objection, that the tails come from heterogeneity or from poor statistics.</p>
+
+<h2>Logic arc through the panels</h2>
+<table>
+<tr><th style="width:9%">Panel</th><th style="width:28%">Role</th><th>What the reader takes away</th></tr>
+<tr><td><b>a</b></td><td>Concept first</td><td>Two cages and one landscape: harmonic up to <i>U</i>*, then much softer. The measured points on the landscape tie the cartoon to data from the start. The force inset gives the mechanical reading (the cage yields: the force saturates) without a separate panel.</td></tr>
+<tr><td><b>b</b></td><td>Raw observation</td><td>The pooled distributions have tails, but pooling mixes junctions with different σ<sub><i>i</i></sub>. This is the confound to remove.</td></tr>
+<tr><td><b>c</b></td><td>Why rescaling is legitimate</td><td>σ<sub><i>i</i></sub> belongs to the junction: it is reproducible within a trajectory and varies between junctions. Dividing by it removes a static property and nothing else.</td></tr>
+<tr><td><b>d–f</b></td><td>Collapse, split by control parameter</td><td>The cores fall on the parameter-free unit Gaussian in all 12 conditions and the tails survive. Swelling changes nothing (e), while precursor mass (d) and temperature (f) change the tail. Showing one panel per control parameter answers "which parameter matters?" at a glance.</td></tr>
+<tr><td><b>g</b></td><td>Universal onset</td><td>With the Gaussian divided out, all 12 curves sit at 1 and take off at the same Δ*. This is the most direct visual evidence for a fixed crossover energy.</td></tr>
+<tr><td><b>h</b></td><td>Quantitative summary</td><td>What is invariant (<i>w</i> ≈ 1, Δ*) and what is not (λ, <i>E</i><sub>3σ</sub>), with error bars and the replicate spread visible.</td></tr>
+<tr><td><b>i</b></td><td>Why pooling is necessary</td><td>With 60–180 frames, a single trajectory cannot show the tail reliably even if every junction has it. This answers the referee who asks why individual junctions "look Gaussian".</td></tr>
+</table>
+
+<h2>Included, moved and dropped</h2>
+<table>
+<tr><th style="width:30%">Item</th><th style="width:15%">Decision</th><th>Reason</th></tr>
+<tr><td>Excess ratio <i>P̂</i>/<i>G</i> (g), <i>E</i><sub>3σ</sub> metric, energy axis on f, null-model panel (i), split-half test (c)</td><td>Added</td><td>Each answers a specific referee question with one plot. <i>E</i><sub>3σ</sub> is more robust than λ, because it does not depend on a fit window.</td></tr>
+<tr><td>Two-state fits as the lines in d–f</td><td>Main</td><td>They pass smoothly through the crossover and yield ε and <i>s</i>², which predict Δ* (Section 5 draft, paragraph 6). The piecewise exponential lines from Origin are replaced; λ is still reported in h.</td></tr>
+<tr><td>4-arm PEG-SH control</td><td>Main (d, h)</td><td>A network of different topology is the closest thing to a mechanism test in the present data. <span class="flag">Confirm its chemistry and strand mass.</span></td></tr>
+<tr><td>Force vs δ<i>x</i> in fN (Origin force plots)</td><td>SI</td><td>It is a derivative of the same histograms and adds no new data. The pN numbers go in the text; the concept is the inset in a.</td></tr>
+<tr><td>Individual Gaussian and non-Gaussian junction histograms</td><td>SI</td><td>13-bin, two-decade histograms chosen by hand look cherry-picked. Use a random gallery in the SI instead, and panel i in the main figure.</td></tr>
+<tr><td>± branches and <i>x</i>/<i>y</i> overlay; lag-time invariance of <i>P</i>(Δ<i>r</i>); MSD plateau</td><td>SI or §3</td><td>These are prerequisites (symmetry, stationarity) rather than the result.</td></tr>
+<tr><td>Raw trajectories (jet colour map)</td><td>SI, re-coloured</td><td>Nature rules: use viridis for time.</td></tr>
+<tr><td>Glass or jamming comparison panel</td><td>Dropped</td><td>This belongs in the discussion. The temperature trend runs opposite to activated cage escape, so a panel would invite the wrong analogy.</td></tr>
+</table>
+
+<h2>Data-consistency flags (read before finalising)</h2>
+<ol>
+<li><span class="flag">σ<sub><i>i</i></sub> distribution vs pooled width.</span> For PEGDA 5 kDa (2 h), the σ<sub><i>i</i></sub> plot gives a mean of 12.5 nm (s.d. 5.6 nm, range 1.5–25 nm), but the Gaussian fit to the pooled <i>P</i>(δ<i>x</i>) of the same sample gives 9.4 nm. A pooled variance cannot be smaller than ⟨σ<sub><i>i</i></sub>²⟩ = (13.7 nm)². A mixture of Gaussians with the plotted σ<sub><i>i</i></sub> would also have <i>heavier</i> pooled tails than measured. Possible causes: σ<sub><i>i</i></sub> is a 2D or radial quantity, it includes localisation error, or the two plots come from different gels or pipelines. <i>P̂</i> depends on σ<sub><i>i</i></sub>, so resolve this first.</li>
+<li><span class="flag">Same sample, two answers.</span> PEGDA 20 kDa (2 h) appears in the mass series (λ = 1.24, <i>E</i><sub>3σ</sub> = 10.3) and in the swelling series (λ = 0.77, <i>E</i><sub>3σ</sub> = 5.9). The spread between gels is therefore about ×1.7, and the "λ rises with mass" claim rests on the 5 kDa vs 10–20 kDa difference. Add replicate gels (<i>n</i> ≥ 3) before stating a mass trend beyond 10 kDa.</li>
+<li><span class="flag">Numbers from the previous draft are not reproduced.</span> λ = 0.65 → 1.10 and <i>F</i> = 0.50 / 0.23 pN do not match any plot in the deck. The Origin exponential lines give λ = 0.60 / 0.69 / 0.90 (mass) and 0.80 → 0.55 (5 → 45 °C). Log-space, count-weighted fits over |Δ| ≥ 2.5 give 0.63 / 0.80 / 1.24 and 0.84 / 0.79 / 0.69 / 0.85 / 0.54. The difference comes from the fit window and weighting; a linear-scale least-squares fit overweights the crossover region. Use maximum likelihood on the raw |Δ| &gt; Δ* values, and quote the window. Your own force plots give plateaus of 0.75, 0.54 and 0.46 pN (5, 10, 20 kDa). These agree with <i>F</i> ≈ 1.5 <i>k</i><sub>B</sub><i>T</i>/σ using the pooled σ. Use 0.5–0.75 pN.</li>
+<li><span class="flag">Δ* is not strictly independent of temperature.</span> It rises from 2.52 to 2.85 (5 → 45 °C) and <i>U</i>* from 3.2 to 4.1 <i>k</i><sub>B</sub><i>T</i>. Each point is within about 1.5 s.e., but the trend is monotonic. Tail weight falls with temperature (<i>E</i><sub>3σ</sub> from 8.7 to 3.3). Write "nearly constant" and report the trend. The statement "Δ* is unchanged by temperature, so the cost is entropic" needs revising (Section 5 draft, paragraph 7).</li>
+<li>The temperature series was swollen for 1 h and the others for 2 h. Say so in the legend (done).</li>
+<li><span class="flag">Placeholders:</span> the split-half values in c are simulated from the measured σ<sub><i>i</i></sub>; replace them with the real split-half σ<sub><i>i</i></sub>. The "this study" band in i is an estimate from the trajectory plots (about 180 frames) and the MSD (0.06–10 s); replace it with the actual distribution of <i>N</i>. Then run the same Shapiro–Wilk test on the real trajectories and plot the measured fraction on the panel. The simulated curves use the real fitted <i>P̂</i>.</li>
+<li>All numbers were digitised from the Origin EMF files in the deck (<code>data/</code>), so they carry about 1% digitisation error. Re-run <code>make_fig5.py</code> on the raw histograms before submission.</li>
+</ol>
+
+<h2>Format</h2>
+<p class="note">183 mm × 162 mm (double column), Arial 5–7 pt, panel letters 8 pt bold, 0.5 pt axes with inward ticks on a closed box, Okabe–Ito colours with a cold-to-warm order for temperature. Vector PDF and SVG, with fonts kept as text. In this build Liberation Sans, a metric-identical clone of Arial, stands in; on a machine with Arial, re-running the script embeds Arial. Keep the colours for 5/10/20 kDa and 4-arm fixed across all figures.</p>

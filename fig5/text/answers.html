@@ -1,0 +1,51 @@
+<h1>Editorial answers to questions 2–8</h1>
+
+<h3>Q2. Should we show the restoring force (spring-like, then flat)?</h3>
+<p>Not as its own main panel. <i>F</i> = −<i>k</i><sub>B</sub><i>T</i> d ln <i>P̂</i>/dδ<i>x</i> contains exactly the information in the semilog <i>P̂</i> and is noisier, being the derivative of a histogram. A referee would count it as the same data twice. It does add two things worth keeping. One is a picture: the cage yields, and beyond Δ* the force stops rising. The other is a number in physical units: the force saturates at about 1.5 <i>k</i><sub>B</sub><i>T</i>/σ<sub><i>i</i></sub>, which is 0.75 / 0.54 / 0.46 pN for 5 / 10 / 20 kDa, taken from your own force plots. So: a small inset in panel a (done), the number in the text, and the fN/pN plots in the SI. Replace both the 10–100 fN of V2 and the 0.50 / 0.23 pN of the previous draft.</p>
+
+<h3>Q3. Fit core and tail together? Does a good fit convince? What do the parameters mean?</h3>
+<p>Fit, but do not use the quality of the fit as the argument. Over three decades, a two-Gaussian mixture, a Gaussian plus exponential, and a superstatistical model all fit, and referees know this. The fit earns its place in three ways:</p>
+<ul>
+<li><b>It gives interpretable numbers.</b> <i>p</i> = 0.05–0.14 is the open-state fraction. <i>s</i> = 1.7–2.7 means the open cage is <i>s</i>² ≈ 3–7 times softer. In series-spring form, the neighbourhood is 2–7 times (typically 3–4 times) more compliant than the junction's own strands during a rearrangement.</li>
+<li><b>It makes a prediction you can check.</b> The opening cost ε = ln <i>s</i> + ln[(1−<i>p</i>)/<i>p</i>] is 3.0 ± 0.4 <i>k</i><sub>B</sub><i>T</i> for all PEGDA conditions. The crossover implied by (<i>p</i>, <i>s</i>), Δ<sub>c</sub> = [2ε<i>s</i>²/(<i>s</i>² − 1)]<sup>½</sup> = 2.6–3.0, matches the model-free Δ* = 2.5–2.85. This consistency between two independent readings of the same curve is more persuasive than any χ².</li>
+<li><b>Global fits test the invariance.</b> Fit all conditions with a shared Δ* (or ε) and compare against free parameters by AIC. This turns "looks the same" into a number.</li>
+</ul>
+<p>Caveat: <i>p</i> and <i>s</i> are anticorrelated. In the main text quote ε, <i>s</i>² and the model-free <i>E</i><sub>3σ</sub>, and put the (<i>p</i>, <i>s</i>) table with its covariance in the SI.</p>
+
+<h3>Q4. Harmonic width depends on mass and temperature but not swelling, and so does the rescaled tail. What does this mean, and do we show it?</h3>
+<p>Yes, show it. It is the strongest mechanistic evidence you have, which is why panels d–f are split by control parameter.</p>
+<ul>
+<li><b>σ independent of swelling</b> is the phantom-network prediction: junction fluctuations do not depend on macroscopic strain (James–Guth). A constrained-junction network (Flory–Erman) would instead show σ growing on swelling as the constraints from neighbours relax. This result belongs to §3.</li>
+<li><b>Tail independent of swelling</b> means the cooperative mode is set by connectivity, not by density or contacts, which swelling dilutes. It is topological.</li>
+<li><b>Tail depends on mass</b>: longer strands carry more stored slack per junction. The 4-arm control supports a topological origin; confirm its strand mass. Caveat: the 20 kDa replicate spread is about ×1.7.</li>
+<li><b>Tail depends on temperature, in the "wrong" direction for activated hopping.</b> Tail weight <i>falls</i> on heating, which argues against glass-like thermally activated escape. Your earlier line "Δ* unchanged by T, so the cost is entropic" should become "ε ≈ 3 <i>k</i><sub>B</sub><i>T</i> with no systematic trend in temperature, while the tail weight falls". The fits hint that the open cage narrows on heating, but <i>s</i> is not monotonic. Measure σ(<i>T</i>) and check whether ℓ = λσ is independent of temperature; if so, the tail has a fixed physical length (slack) in nm.</li>
+</ul>
+
+<h3>Q5. Show both branches or only the positive half?</h3>
+<p>Both, once, where it matters: the unscaled pooled plot (b) shows ±δ<i>x</i>. The symmetric "tent" against the Gaussian parabola is instantly readable and proves symmetry. For the rescaled analysis fold to |Δ| (d–g). This doubles the statistics, halves the clutter and is standard practice, provided you say so. In the SI, overlay +/− and <i>x</i>/<i>y</i> with an asymmetry measure, for example ∫|<i>P</i>(Δ) − <i>P</i>(−Δ)| dΔ.</p>
+
+<h3>Q6. About 10% of single junctions are non-Gaussian: is "too few frames" a legitimate explanation? Show single junctions?</h3>
+<p>The claim is legitimate, but it must be <i>demonstrated</i>, not asserted, and this is what panel i does. With 60–180 frames, even if every junction had exactly the pooled <i>P̂</i>, a Shapiro–Wilk test would flag only 25–50% of junctions (median; 10–85% across conditions), against 5% for truly Gaussian junctions. Apply the same test to your trajectories and plot the measured fraction on the panel:</p>
+<ul>
+<li>On the homogeneous curve: the tail belongs to every junction (switching).</li>
+<li>Well below it, but above 5%: a subpopulation with a tail.</li>
+<li>Also check that the flagged fraction rises with <i>N</i> when you split junctions by trajectory length.</li>
+</ul>
+<p>If your "10%" came from inspecting per-junction histograms by eye, that is a weaker test than Shapiro–Wilk, and the two numbers are not directly comparable. Do not put a hand-picked Gaussian junction next to a hand-picked non-Gaussian one in the main figure; it reads as cherry-picking. Use a random gallery with the pooled <i>P̂</i> overlaid, in the SI.</p>
+
+<h3>Q7. A schematic to lead the figure?</h3>
+<p>Yes: one schematic, in panel a, and make it do work. Pair the cartoon of the two cages with the measured landscape, so the reader sees the hypothesis and the evidence together. Keep the cartoon minimal (junction, four strands, co-moving neighbours). Detailed loop and dangling-end drawings belong to the mechanism section, or to the SI if §6 is folded into §5.</p>
+
+<h3>Q8. Justify Δ = δx/σ<sub><i>i</i></sub> up front: how?</h3>
+<p>Three checks, which the figure now covers:</p>
+<ol>
+<li>σ<sub><i>i</i></sub> is persistent: split-half reproducibility (c).</li>
+<li>σ<sub><i>i</i></sub> is heterogeneous: its distribution (c, inset).</li>
+<li>Rescaling collapses every core onto the unit Gaussian with no free parameter (d–f; <i>w</i> = 1.03 ± 0.02 in h).</li>
+</ol>
+<p>Two methodological points a sharp referee will raise:</p>
+<ul>
+<li>Estimate σ<sub><i>i</i></sub> robustly (a core fit or 1.4826 × MAD), not as the full s.d. A full s.d. absorbs the tail into σ<sub><i>i</i></sub> and shrinks the very excess you report.</li>
+<li>Cross-validate by rescaling each half-trajectory with σ<sub><i>i</i></sub> from the other half. This removes any circularity; if <i>P̂</i> is unchanged, the rescaling is not manufacturing the tail.</li>
+</ul>
+<p>Finally, resolve flag 1 (σ<sub><i>i</i></sub> vs pooled σ) before anything else.</p>
