@@ -52,3 +52,24 @@ A close-packed bilayer (z = 0.633) raises the curve by about 2.3× at θ = 60°.
 - Nushtaeva & Kruglyakov, *Mendeleev Commun.* 11, 235 (2001), [doi:10.1070/MC2001v011n06ABEH001505](https://doi.org/10.1070/MC2001v011n06ABEH001505)
 - Morris, Neethling, Cilliers, *Langmuir* 27, 11475 (2011), random packing model
 - Hatchell, Song, Daigle, *J. Colloid Interface Sci.* (2022), critical demulsification pressure, [ScienceDirect](https://www.sciencedirect.com/science/article/abs/pii/S0021979721018312)
+
+---
+
+## Update (Oct 2026): pore-scale model, integrated figure and report
+
+`pickering_pmax_report.pdf` holds the integrated figure (`fig_pmax_integrated.{pdf,svg,png}`), its legend, the focus and logic arc, and SI notes on Pickering emulsion stability.
+
+| File | Role |
+|---|---|
+| `pore_model.py` | model: failure pressure of a pore (bridging monolayer, bilayer, defects); `python3 pore_model.py` runs self-checks |
+| `fig_pmax_integrated.py` | 7-panel figure, 183 mm wide, Nature style |
+| `key_numbers.py` → `key_numbers.md` | every number quoted in the text |
+| `build_report.py` | assembles the PDF |
+
+Rebuild: `python3 fig_pmax_integrated.py && python3 key_numbers.py && python3 build_report.py` (needs matplotlib, numpy, reportlab).
+
+Main result, bridging monolayer, closed form (matches the numerical cap solution to within 3e-4 for θ = 5–85°, h = 0.155R–5R):
+
+  P_max = 4 γ R cos θ / [h (h + 2R)]
+
+Here h is the radius of the largest particle-free disc in the pore. Close packing gives 12 γ cos θ / R, i.e. p_eff = 6 in Kaptay's form. A vacancy gives one ninth of that. The earlier assumed band p = 0.1–1 corresponds to openings of 0.7R–3.6R. A bilayer fails in two steps (penetrate own layer, then bridge the partner). It stays finite at θ = 90° and tolerates a defect in one layer (−32% at θ = 70°, versus −89% for a monolayer vacancy). The measured centrifuge values are no longer plotted; see SI Note 3 of the report.
