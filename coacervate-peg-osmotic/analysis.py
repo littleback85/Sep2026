@@ -1,8 +1,10 @@
 """
 PDDA/BSA coacervate layer compressed by PEG osmotic stress: osmotic modulus.
 
-Run:  python3 analysis.py   -> prints tables, writes results.md + figure (png/pdf)
-All inputs are at the top of the file; change them and re-run.
+Run:  python3 analysis.py   -> prints tables, writes results.md, the main figure
+                               (coacervate_osmotic_modulus.png/.pdf) and the SI
+                               figure (SI_raw_trajectories.png/.pdf)
+Then: python3 build_pdf.py  -> coacervate_osmotic_modulus_report.pdf
 
 Physics
 -------
@@ -13,273 +15,343 @@ The osmotic (compression) modulus is
 
     K_osm = c dPi/dc = -dPi/d ln V = dPi/d eps,   eps = -ln(h/h0).
 
-K_osm is the slope of Pi against eps. PEG pressure is the controlled variable and
-eps is what is measured (and scatters), so the primary fit regresses eps on Pi
-and inverts the slope. Regressing Pi on eps instead, as the original panel did,
-biases K slightly when eps scatters.
+PEG pressure is the controlled variable and eps is what is measured (and
+scatters), so every fit regresses strain on pressure and inverts the slope.
+The 20% PEG group is not used for the modulus (persistent wall climbing; sample
+2 also excluded); it is shown only in the SI figure.
 """
+import csv
+import os
 import numpy as np
+from scipy.optimize import curve_fit
 import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
+from matplotlib.lines import Line2D
+
+HERE = os.path.dirname(os.path.abspath(__file__))
 
 # ----------------------------------------------------------------------------
 # 1. INPUTS
 # ----------------------------------------------------------------------------
-# h/h0 at t = 80 h for each sample, digitised from the per-sample trajectory
-# panels (marker centroids, axis calibrated on the tick marks, ~0.005 reading
-# error). Group means agree with panel A to within 0.002.
-H80 = {
-    0:  [1.017, 1.010, 1.018],
-    5:  [1.005, 0.924, 0.958],
-    10: [0.889, 0.831, 0.826],
-    15: [0.763, 0.740, 0.780],
-    20: [0.367, 0.882, 0.385],   # sample 2 (0.882) excluded, see EXCLUDE
-}
-EXCLUDE = {(20, 1)}              # (PEG %, sample index 0-based): 20% sample 2
+# Per-sample h/h0 trajectories digitised from the original per-sample panels
+# (marker centroids, axes calibrated on tick marks, ~0.005 reading error).
+# Where markers of different samples overlap, the hidden value was solved from
+# the group mean plotted in the original panel A. Replace this file with the
+# measured numbers when available.
+TIMES, H = None, {}
+with open(os.path.join(HERE, "digitised_trajectories.csv")) as fh:
+    rd = csv.reader(fh)
+    head = next(rd)
+    TIMES = np.array([float(c[1:-1]) for c in head[2:]])
+    for r in rd:
+        H.setdefault(int(r[0]), []).append(np.array([float(x) for x in r[2:]]))
+T_END = 80.0
+IEND = int(np.where(TIMES == T_END)[0][0])
+H80 = {g: [tr[IEND] for tr in H[g]] for g in H}
+
+GROUPS = [0, 5, 10, 15]                  # used for the modulus
+EXCLUDED_20 = {1}                        # 20% sample 2 (0-based index)
 
 # Nominal PEG osmotic pressure (MPa), read off the original panel B.
-PI_NOMINAL = {0: 0.0, 5: 0.052, 10: 0.181, 15: 0.412}
-
-# 20% was not in the original panel, so its pressure is extrapolated with the
-# Rand-type empirical form log10 Pi = a + b w^0.21 fitted to 5/10/15%.
-# REPLACE with the value from your own PEG calibration if you have it.
-PI_20_OVERRIDE = None            # e.g. 0.80 (MPa)
+PI = {0: 0.0, 5: 0.052, 10: 0.181, 15: 0.412}
 
 T = 298.15
+R = 8.314
 KB = 1.380649e-23
 NA = 6.02214e23
-WATER_K = 2.2e3                  # MPa, adiabatic/isothermal bulk modulus of water ~2.2 GPa
-
-# Concentrated BSA reference: Carnahan-Starling hard spheres (M = 66.4 kDa) with
-# an effective (hydrated, charge-swollen) specific volume v_eff. 1.2-1.5 mL/g
-# brackets the range used to describe BSA osmotic pressure in 0.15 M NaCl near
-# neutral pH (Minton's effective-hard-particle analysis of Vilker et al. 1981).
-BSA_M = 66.4                     # kg/mol
-BSA_VEFF = (1.2e-3, 1.5e-3)      # m^3/kg
-BSA_C = [100, 200, 300, 400]     # g/L
+RT = R * T                               # J/mol
 
 COL = {0: "#555555", 5: "#0072B2", 10: "#E69F00", 15: "#009E73", 20: "#CC79A7"}
 
 # ----------------------------------------------------------------------------
-# 2. PRESSURES
+# 2. PEG PRESSURE CURVE (for the PEG-bath modulus and the 20% SI annotation)
 # ----------------------------------------------------------------------------
 w = np.array([5, 10, 15], float)
-logPi = np.log10([PI_NOMINAL[k] for k in (5, 10, 15)])
+logPi = np.log10([PI[k] for k in (5, 10, 15)])
 A = np.vstack([np.ones(3), w**0.21]).T
 (rand_a, rand_b), *_ = np.linalg.lstsq(A, logPi, rcond=None)
 def pi_rand(wt):
     return 10 ** (rand_a + rand_b * np.asarray(wt, float) ** 0.21)
-pw_n, pw_lnA = np.polyfit(np.log(w), np.log(10**logPi), 1)
-PI_20_RAND = float(pi_rand(20))
-PI_20_POW = float(np.exp(pw_lnA) * 20**pw_n)
-PI = dict(PI_NOMINAL)
-PI[20] = PI_20_OVERRIDE if PI_20_OVERRIDE is not None else PI_20_RAND
-
-# PEG solution's own osmotic modulus, K = c dPi/dc ~ w dPi/dw (Rand form)
 def k_peg(wt):
-    return pi_rand(wt) * np.log(10) * rand_b * 0.21 * np.asarray(wt, float) ** 0.21
+    """PEG solution's own osmotic modulus, K = c dPi/dc ~ w dPi/dw."""
+    return float(pi_rand(wt) * np.log(10) * rand_b * 0.21 * np.asarray(wt, float) ** 0.21)
+PI_20 = float(pi_rand(20))
 
 # ----------------------------------------------------------------------------
-# 3. FITS
+# 3. FITS (0-15% PEG, 80 h, individual samples)
 # ----------------------------------------------------------------------------
-def points(groups, drop=EXCLUDE):
-    P, E, G = [], [], []
-    for g in groups:
-        for i, h in enumerate(H80[g]):
-            if (g, i) in drop:
-                continue
-            P.append(PI[g]); E.append(-np.log(h)); G.append(g)
-    return np.array(P), np.array(E), np.array(G)
+P = np.array([PI[g] for g in GROUPS for _ in H80[g]])
+HH = np.array([h for g in GROUPS for h in H80[g]])
+EPS = -np.log(HH)
+ENG = 1 - HH
+N = len(P)
 
 def ols(x, y):
-    """y = m x + b, with standard errors."""
-    n = len(x)
-    X = np.vstack([x, np.ones(n)]).T
+    X = np.vstack([x, np.ones(len(x))]).T
     (m, b), *_ = np.linalg.lstsq(X, y, rcond=None)
     r = y - (m * x + b)
-    s2 = r @ r / (n - 2)
+    s2 = r @ r / (len(x) - 2)
     cov = s2 * np.linalg.inv(X.T @ X)
-    r2 = 1 - r @ r / np.sum((y - y.mean()) ** 2)
-    return m, b, np.sqrt(cov[0, 0]), np.sqrt(cov[1, 1]), r2
+    return m, b, np.sqrt(cov[0, 0]), r @ r, 1 - r @ r / np.sum((y - y.mean()) ** 2)
 
-T975 = {1: 12.71, 2: 4.30, 10: 2.23, 12: 2.18}   # Student t, two-sided 95%
+T975_10 = 2.228                          # Student t, 10 dof, two-sided 95%
 
-def fit_set(groups, label):
-    P, E, G = points(groups)
-    # primary: eps = Pi / K + eps0  ->  K = 1/m
-    m, e0, sm, _, r2 = ols(P, E)
+def linear_fit(strain):
+    m, s0, sm, sse, r2 = ols(P, strain)
     K = 1 / m
     sK = sm / m**2
-    dof = len(P) - 2
-    ci = T975.get(dof, 2.2) * sK
-    # as in the original panel: Pi on eps, group means
-    gm = np.array([np.mean([e for e, gg in zip(E, G) if gg == g]) for g in groups])
-    Km, _, _, _, r2m = ols(gm, np.array([PI[g] for g in groups]))
-    # same thing on individual samples
-    Ki, _, _, _, _ = ols(E, P)
-    return dict(label=label, groups=groups, n=len(P), K=K, sK=sK, ci=ci, e0=e0,
-                r2=r2, K_means=Km, r2_means=r2m, K_indiv_PionEps=Ki, P=P, E=E, G=G)
+    return dict(K=K, sK=sK, ci=T975_10 * sK, s0=s0, sse=sse, r2=r2)
 
-FITS = [fit_set([0, 5, 10, 15], "0-15% PEG"),
-        fit_set([0, 5, 10, 15, 20], "0-20% PEG (20% sample 2 excluded)")]
+LIN = linear_fit(EPS)                    # Pi = K (eps - eps0)
+ENGF = linear_fit(ENG)                   # Pi = K (e - e0), e = 1 - h/h0
 
-# group means and step (tangent) moduli between neighbouring concentrations
-GROUPS = [0, 5, 10, 15, 20]
-def gmean(g):
-    return np.mean([-np.log(h) for i, h in enumerate(H80[g]) if (g, i) not in EXCLUDE])
-def gsd(g):
-    return np.std([-np.log(h) for i, h in enumerate(H80[g]) if (g, i) not in EXCLUDE], ddof=1)
-EPS = {g: gmean(g) for g in GROUPS}
-STEP = [(a, b, (PI[b] - PI[a]) / (EPS[b] - EPS[a])) for a, b in zip(GROUPS[:-1], GROUPS[1:])]
-SECANT = {g: PI[g] / (EPS[g] - EPS[0]) for g in GROUPS[1:]}
+# Stiffening equation of state: K(Pi) = K0 + alpha*Pi
+#   <=> Pi = (K0/alpha) [exp(alpha (eps-eps0)) - 1]
+#   <=> eps = eps0 + ln(1 + alpha Pi / K0) / alpha
+def eps_stiff(p, e0, K0, al):
+    return e0 + np.log1p(al * p / K0) / al
+pS, cS = curve_fit(eps_stiff, P, EPS, p0=(-0.015, 1.0, 2.0), maxfev=20000)
+sS = np.sqrt(np.diag(cS))
+sse_S = np.sum((EPS - eps_stiff(P, *pS)) ** 2)
+def aicc(sse, k, n=N):
+    return n * np.log(sse / n) + 2 * k + 2 * k * (k + 1) / (n - k - 1)
+STIFF = dict(e0=pS[0], K0=pS[1], sK0=sS[1], al=pS[2], sal=sS[2], sse=sse_S,
+             K15=pS[1] + pS[2] * PI[15],
+             dAICc=aicc(sse_S, 3) - aicc(LIN["sse"], 2))
 
-# BSA reference
-def bsa_K(c_gL, veff):
-    c = c_gL                                   # kg/m^3
+# Original panel-B method: Pi on eps, group means
+GM = {g: np.mean(-np.log(H80[g])) for g in GROUPS}
+GSD = {g: np.std(-np.log(H80[g]), ddof=1) for g in GROUPS}
+K_MEANS = ols(np.array([GM[g] for g in GROUPS]), np.array([PI[g] for g in GROUPS]))[0]
+STEP = [(a, b, (PI[b] - PI[a]) / (GM[b] - GM[a])) for a, b in zip(GROUPS[:-1], GROUPS[1:])]
+
+# How curved can an EOS be over this window and still look linear?
+# For K = K0 exp(beta*eps) the secant over [0, eps] is K0 (e^{x}-1)/x, x = beta*eps.
+EPS_SPAN = GM[15] - GM[0]
+
+# ----------------------------------------------------------------------------
+# 4. BENCHMARKS (MPa)
+# ----------------------------------------------------------------------------
+BSA_M = 66.4                             # kg/mol
+def bsa_K(c, veff):
     phi = c * veff
     n = c / BSA_M * NA
     dphiZ = (1 + 4*phi + 4*phi**2 - 4*phi**3 + phi**4) / (1 - phi) ** 4
-    Z = (1 + phi + phi**2 - phi**3) / (1 - phi) ** 3
-    return n * KB * T * dphiZ / 1e6, n * KB * T * Z / 1e6, phi   # MPa, MPa
-BSA = {c: [bsa_K(c, v) for v in BSA_VEFF] for c in BSA_C}
+    return n * KB * T * dphiZ / 1e6
+def bsa_range(c):
+    return bsa_K(c, 1.2e-3), bsa_K(c, 1.5e-3)
+
+PI_SALINE = 2 * 150 * RT / 1e6           # 150 mM NaCl, ideal van 't Hoff (MPa)
+PI_CELL = 290 * RT / 1e6                 # 290 mOsm/kg cytoplasm
+# Benchmarks: (group, label, lo, hi, kind, colour)
+#   kind "osm" = osmotic / compressive modulus (filled), "shear" = shear modulus (open)
+BENCH = [
+    ("This work", "PDDA/BSA coacervate", LIN["K"] - LIN["ci"], LIN["K"] + LIN["ci"], "osm", "#111111"),
+    ("PEG bath", "PEG 5%", k_peg(5), k_peg(5), "osm", COL[5]),
+    ("PEG bath", "PEG 10%", k_peg(10), k_peg(10), "osm", COL[10]),
+    ("PEG bath", "PEG 15%", k_peg(15), k_peg(15), "osm", COL[15]),
+    ("Protein", "BSA 200 g/L", *bsa_range(200), "osm", "#8c6d31"),
+    ("Protein", "BSA 300 g/L", *bsa_range(300), "osm", "#8c6d31"),
+    ("Protein", "BSA 400 g/L", *bsa_range(400), "osm", "#8c6d31"),
+    ("Salt", "150 mM NaCl", 0.93 * PI_SALINE, PI_SALINE, "osm", "#6b6b6b"),
+    ("Biological", "Cell (osmometer)", PI_CELL / 0.8, PI_CELL / 0.6, "osm", "#6b6b6b"),
+    ("Biological", "Articular cartilage", 0.08, 2.1, "osm", "#6b6b6b"),
+    ("Gels", "Synthetic gels", 1e-3, 1e-1, "osm", "#6b6b6b"),
+    ("Gels", "PEGDA gels G′ (this lab)", 1.496e-3, 1.505e-2, "shear", "#6b6b6b"),
+    ("Coacervate", "Complex coacervate G′", 1e-4, 1e-2, "shear", "#6b6b6b"),
+]
 
 # ----------------------------------------------------------------------------
-# 4. REPORT
+# 5. REPORT
 # ----------------------------------------------------------------------------
 def report():
-    L = []
-    L.append("# Osmotic modulus of the PDDA/BSA coacervate under PEG stress\n")
-    L.append("## Inputs (h/h0 at 80 h, digitised)\n")
-    L.append("| PEG | Pi (MPa) | sample 1 | sample 2 | sample 3 | mean eps = -ln(h/h0) | SD |")
+    L = ["# Osmotic modulus of the PDDA/BSA coacervate under PEG stress\n"]
+    L.append("## Inputs (h/h0 at 80 h, digitised; 0–15% PEG)\n")
+    L.append("| PEG | Π (MPa) | sample 1 | sample 2 | sample 3 | mean ε = −ln(h/h0) | SD |")
     L.append("|---|---|---|---|---|---|---|")
     for g in GROUPS:
-        hs = [f"~~{h:.3f}~~ (excluded)" if (g, i) in EXCLUDE else f"{h:.3f}" for i, h in enumerate(H80[g])]
-        src = " (extrapolated)" if g == 20 and PI_20_OVERRIDE is None else ""
-        L.append(f"| {g}% | {PI[g]:.3f}{src} | " + " | ".join(hs) + f" | {EPS[g]:.3f} | {gsd(g):.3f} |")
+        L.append(f"| {g}% | {PI[g]:.3f} | " + " | ".join(f"{h:.3f}" for h in H80[g]) +
+                 f" | {GM[g]:.3f} | {GSD[g]:.3f} |")
     L.append("")
-    L.append(f"Pi(20%) extrapolation: Rand form log10 Pi = {rand_a:.2f} + {rand_b:.2f} w^0.21 "
-             f"gives {PI_20_RAND:.2f} MPa; a pure power law (Pi ~ w^{pw_n:.2f}) gives {PI_20_POW:.2f} MPa.\n")
-    L.append("## Osmotic modulus K = dPi/d(-ln h)\n")
-    L.append("| Data set | n | K (MPa), eps-on-Pi fit | 95% CI | R² | K, Pi-on-eps on means (original method) |")
-    L.append("|---|---|---|---|---|---|")
-    for f in FITS:
-        L.append(f"| {f['label']} | {f['n']} | **{f['K']:.2f}** ± {f['sK']:.2f} | "
-                 f"{f['K']-f['ci']:.2f} to {f['K']+f['ci']:.2f} | {f['r2']:.2f} | {f['K_means']:.2f} (R² {f['r2_means']:.2f}) |")
-    L.append("")
-    L.append("## Local (step) moduli between neighbouring concentrations\n")
-    L.append("| Step | dPi (MPa) | d eps | K_step (MPa) |")
+    L.append("## Fits (n = 12 samples, strain regressed on Π)\n")
+    L.append("| Model | K (MPa) | 95% CI | R² or note |")
     L.append("|---|---|---|---|")
-    for a, b, k in STEP:
-        L.append(f"| {a}% to {b}% | {PI[b]-PI[a]:.3f} | {EPS[b]-EPS[a]:.3f} | {k:.2f} |")
+    L.append(f"| Linear in log strain, Π = K(ε − ε₀) | **{LIN['K']:.2f}** ± {LIN['sK']:.2f} | "
+             f"{LIN['K']-LIN['ci']:.2f}–{LIN['K']+LIN['ci']:.2f} | R² {LIN['r2']:.2f} |")
+    L.append(f"| Linear in engineering strain, Π = K(1 − h/h₀ − e₀) | {ENGF['K']:.2f} ± {ENGF['sK']:.2f} | "
+             f"{ENGF['K']-ENGF['ci']:.2f}–{ENGF['K']+ENGF['ci']:.2f} | R² {ENGF['r2']:.2f} |")
+    L.append(f"| Stiffening EOS, K = K₀ + αΠ | K₀ = {STIFF['K0']:.2f} ± {STIFF['sK0']:.2f}, "
+             f"α = {STIFF['al']:.1f} ± {STIFF['sal']:.1f} | K(15%) = {STIFF['K15']:.2f} | "
+             f"ΔAICc vs linear = {STIFF['dAICc']:+.1f} |")
+    L.append(f"| Π on ε, group means (original panel) | {K_MEANS:.2f} | – | – |")
     L.append("")
-    L.append("## Reference osmotic moduli (MPa)\n")
-    L.append("| System | K_osm (MPa) |")
-    L.append("|---|---|")
-    for wt in (5, 10, 15, 20):
-        L.append(f"| PEG solution {wt}% (from the same Pi(w) curve) | {float(k_peg(wt)):.2f} |")
-    for c in BSA_C:
-        (k1, p1, f1), (k2, p2, f2) = BSA[c]
-        L.append(f"| BSA {c} g/L, hard-sphere (phi_eff {f1:.2f}-{f2:.2f}; Pi {p1:.3f}-{p2:.3f} MPa) | {k1:.2f} to {k2:.2f} |")
-    L.append(f"| Liquid water, bulk modulus | {WATER_K:.0f} |")
+    L.append("Step moduli between neighbouring group means: " +
+             ", ".join(f"{a}→{b}% {k:.2f} MPa" for a, b, k in STEP) + ".\n")
+    L.append("## Benchmarks (MPa)\n")
+    L.append("| Group | System | K or G (MPa) | Type |")
+    L.append("|---|---|---|---|")
+    for grp, lab, lo, hi, kind, _ in BENCH:
+        v = f"{lo:.3g}" if np.isclose(lo, hi) else f"{lo:.3g}–{hi:.3g}"
+        L.append(f"| {grp} | {lab.replace(chr(10), ' ')} | {v} | {'osmotic/compressive' if kind == 'osm' else 'shear'} |")
+    L.append("")
+    L.append(f"20% PEG (SI only): Π extrapolated to {PI_20:.2f} MPa; h/h0(80 h) = "
+             + ", ".join(f"{h:.3f}" for h in H80[20]) + " (sample 2 excluded).")
     return "\n".join(L)
 
 # ----------------------------------------------------------------------------
-# 5. FIGURE
+# 6. FIGURES
 # ----------------------------------------------------------------------------
-def figure(path):
-    plt.rcParams.update({"font.family": "DejaVu Sans", "font.size": 9,
-                         "axes.spines.top": False, "axes.spines.right": False,
-                         "axes.linewidth": 0.8})
-    fig, axs = plt.subplots(1, 3, figsize=(13.2, 4.3), gridspec_kw=dict(width_ratios=[1.25, 0.9, 1.15]))
-    f15, f20 = FITS
+plt.rcParams.update({"font.family": "DejaVu Sans", "font.size": 8.5,
+                     "axes.spines.top": False, "axes.spines.right": False,
+                     "axes.linewidth": 0.8, "xtick.major.width": 0.8, "ytick.major.width": 0.8,
+                     "legend.handlelength": 2.2})
+NOTE = "#555555"
 
-    # (a) Pi vs eps -------------------------------------------------------------
-    ax = axs[0]
+def scatter_groups(ax, xf):
     for g in GROUPS:
-        for i, h in enumerate(H80[g]):
-            e = -np.log(h)
-            if (g, i) in EXCLUDE:
-                ax.scatter(e, PI[g], s=36, marker="x", color=COL[g], lw=1.4, zorder=4)
-                ax.annotate("20% sample 2\n(excluded)", (e, PI[g]), xytext=(6, -16),
-                            textcoords="offset points", fontsize=7.5, color="#555555")
-                continue
-            ax.scatter(e, PI[g], s=22, facecolor="white", edgecolor=COL[g], lw=1.1, zorder=3)
-        ax.errorbar(EPS[g], PI[g], xerr=gsd(g), fmt="s", ms=7, color=COL[g],
-                    mec="white", mew=0.8, capsize=3, lw=1.2, zorder=5)
-        lab = f"{g}%" + ("*" if g == 20 and PI_20_OVERRIDE is None else "")
-        off = {0: (6, -10), 5: (10, 6), 10: (10, 6), 15: (10, 6), 20: (-8, 10)}[g]
-        ax.annotate(lab, (EPS[g], PI[g]), xytext=off, textcoords="offset points",
-                    color="#333333", fontsize=9)
-    xx = np.linspace(-0.05, 1.05, 50)
-    for f, ls, c in [(f15, "--", "#222222"), (f20, ":", COL[20])]:
-        x = np.linspace(min(f["E"]) - 0.02, max(f["E"]) + 0.02, 50)
-        ax.plot(x, f["K"] * (x - f["e0"]), ls, color=c, lw=1.6,
-                label=f"{f['label']}: K = {f['K']:.2f} ± {f['sK']:.2f} MPa")
-    ax.set_xlabel(r"Logarithmic height strain, $\varepsilon=-\ln(h/h_0)$ at 80 h")
+        xs = [xf(h) for h in H80[g]]
+        ax.scatter(xs, [PI[g]] * 3, s=20, facecolor="white", edgecolor=COL[g], lw=1.1, zorder=3)
+        xm = np.mean(xs); xsd = np.std(xs, ddof=1)
+        ax.errorbar(xm, PI[g], xerr=xsd, fmt="s", ms=6.5, color=COL[g], mec="white", mew=0.8,
+                    capsize=2.5, lw=1.1, zorder=5)
+
+def figure(path):
+    fig = plt.figure(figsize=(7.2, 7.0))
+    gs = fig.add_gridspec(2, 2, height_ratios=[1, 1.15], hspace=0.38, wspace=0.32,
+                          left=0.095, right=0.985, top=0.965, bottom=0.165)
+    ax_a, ax_b, ax_c = fig.add_subplot(gs[0, 0]), fig.add_subplot(gs[0, 1]), fig.add_subplot(gs[1, :])
+    pp = np.linspace(0, 0.45, 200)
+
+    # (a) Pi vs log strain -------------------------------------------------------
+    ax = ax_a
+    scatter_groups(ax, lambda h: -np.log(h))
+    e_lin = LIN["s0"] + pp / LIN["K"]
+    ax.plot(e_lin, pp, "--", color="#111111", lw=1.4, zorder=2)
+    ax.plot(eps_stiff(pp, *pS), pp, "-", color="#9a9a9a", lw=1.1, zorder=1)
+    for g, (dx, dy) in {0: (-4, 8), 5: (-24, 6), 10: (-28, 5), 15: (-28, 6)}.items():
+        ax.annotate(f"{g}%", (GM[g], PI[g]), xytext=(dx, dy), textcoords="offset points",
+                    fontsize=8, color="#333333")
+    ax.set_xlim(-0.06, 0.36); ax.set_ylim(-0.03, 0.47)
+    ax.set_xlabel(r"Log height strain, $\varepsilon = -\ln(h/h_0)$")
     ax.set_ylabel("PEG osmotic pressure, Π (MPa)")
-    ax.set_xlim(-0.06, 1.08); ax.set_ylim(-0.04, 0.95)
-    ax.axhline(0, color="#bbbbbb", lw=0.6, zorder=0); ax.axvline(0, color="#bbbbbb", lw=0.6, zorder=0)
-    ax.legend(loc="upper left", frameon=False, fontsize=8)
-    ax.text(0.99, 0.02, "open circles: single samples\nsquares: mean ± SD (n = 3; 20%: n = 2)\n"
-            "* Π(20%) extrapolated", transform=ax.transAxes, ha="right", va="bottom",
-            fontsize=7.5, color="#555555")
-    ax.set_title("a  Equation of state from osmotic compression", loc="left", fontweight="bold")
+    leg = [Line2D([], [], ls="--", color="#111111", lw=1.4,
+                  label=f"Linear: K = {LIN['K']:.2f} ± {LIN['sK']:.2f} MPa"),
+           Line2D([], [], ls="-", color="#9a9a9a", lw=1.1,
+                  label=f"K = K$_0$ + αΠ: K$_0$ = {STIFF['K0']:.2f}, α = {STIFF['al']:.1f}")]
+    ax.legend(handles=leg, loc="lower right", frameon=False, fontsize=7.0)
+    ax.set_title("a", loc="left", fontweight="bold", fontsize=11, x=-0.16)
 
-    # (b) moduli ----------------------------------------------------------------
-    ax = axs[1]
-    labels, vals, errs, cols = [], [], [], []
-    for f, c in [(f15, "#222222"), (f20, COL[20])]:
-        labels.append("Fit 0–15%" if f is f15 else "Fit 0–20%\n(excl. S2)")
-        vals.append(f["K"]); errs.append(f["ci"]); cols.append(c)
-    for a, b, k in STEP:
-        labels.append(f"{a}→{b}%"); vals.append(k); errs.append(0); cols.append(COL[b])
-    y = np.arange(len(labels))[::-1]
-    for yi, v, e, c in zip(y, vals, errs, cols):
-        ax.plot([0, v], [yi, yi], color=c, lw=2, solid_capstyle="round", alpha=0.35)
-        ax.errorbar(v, yi, xerr=e if e else None, fmt="o", ms=7, color=c, mec="white", capsize=3)
-        ax.text(v + (e if e else 0) + 0.06, yi, f"{v:.2f}", va="center", fontsize=8.5, color="#333333")
-    ax.axhline(y[1] - 0.5, color="#cccccc", lw=0.8)
-    ax.set_yticks(y); ax.set_yticklabels(labels)
-    ax.set_xlim(0, 3.4)
-    ax.set_xlabel("Osmotic modulus K = dΠ/dε (MPa)")
-    ax.text(0.98, 0.03, "global fits: ±95% CI\nsteps: between group means", transform=ax.transAxes,
-            ha="right", va="bottom", fontsize=7.5, color="#555555")
-    ax.set_title("b  Modulus, global and local", loc="left", fontweight="bold")
+    # (b) Pi vs h/h0 ------------------------------------------------------------
+    ax = ax_b
+    scatter_groups(ax, lambda h: h)
+    ax.plot(np.exp(-e_lin), pp, "--", color="#111111", lw=1.4, zorder=2)
+    ax.plot(1 - (ENGF["s0"] + pp / ENGF["K"]), pp, ":", color="#111111", lw=1.4, zorder=2)
+    ax.set_xlim(1.06, 0.70); ax.set_ylim(-0.03, 0.47)
+    ax.set_xlabel(r"Relative height, $h/h_0$ (80 h)")
+    ax.set_ylabel("PEG osmotic pressure, Π (MPa)")
+    leg = [Line2D([], [], ls="--", color="#111111", lw=1.4, label="Linear in ε (panel a)"),
+           Line2D([], [], ls=":", color="#111111", lw=1.4,
+                  label=f"Linear in 1 − h/h$_0$: K = {ENGF['K']:.2f} MPa")]
+    ax.legend(handles=leg, loc="upper left", frameon=False, fontsize=7.3)
+    ax.text(0.98, 0.03, "axis reversed:\ncompression → right", transform=ax.transAxes, ha="right",
+            va="bottom", fontsize=7, color=NOTE)
+    ax.set_title("b", loc="left", fontweight="bold", fontsize=11, x=-0.16)
 
-    # (c) comparison --------------------------------------------------------------
-    ax = axs[2]
-    rows = []
-    rows.append(("Liquid water (bulk)", WATER_K, WATER_K, "#999999"))
-    for c in BSA_C[::-1]:
-        k = [BSA[c][0][0], BSA[c][1][0]]
-        rows.append((f"BSA {c} g/L (hard-sphere)", min(k), max(k), "#8c6d31"))
-    for wt in (20, 15, 10, 5):
-        k = float(k_peg(wt)); rows.append((f"PEG {wt}% solution", k, k, "#7f7f7f"))
-    rows.append(("Coacervate, fit 0–20%", f20["K"] - f20["ci"], f20["K"] + f20["ci"], COL[20]))
-    rows.append(("Coacervate, fit 0–15%", f15["K"] - f15["ci"], f15["K"] + f15["ci"], "#222222"))
-    rows = rows[::-1]
-    for i, (lab, lo, hi, c) in enumerate(rows):
-        yi = len(rows) - 1 - i
-        if hi > lo:
-            ax.plot([lo, hi], [yi, yi], color=c, lw=6, solid_capstyle="round", alpha=0.55)
-        mid = np.sqrt(lo * hi)
-        ax.plot(mid, yi, "o", ms=6, color=c, mec="white")
-    ax.set_yticks(range(len(rows))[::-1]); ax.set_yticklabels([r[0] for r in rows])
-    ax.set_xscale("log"); ax.set_xlim(3e-3, 1e4)
-    ax.axvspan(FITS[0]["K"] - FITS[0]["ci"], FITS[0]["K"] + FITS[0]["ci"], color="#222222", alpha=0.07, lw=0)
-    ax.set_xlabel("Osmotic (compression) modulus, K = c ∂Π/∂c (MPa)")
-    ax.text(0.60, 0.62, "BSA: Carnahan–Starling\nhard spheres, 66.4 kDa,\nv_eff = 1.2–1.5 mL/g\n(bar = range)\n\nPEG: K from the same\nΠ(w) curve as panel a",
-            transform=ax.transAxes, ha="left", va="center", fontsize=7, color="#555555")
-    ax.set_title("c  How stiff is ~1 MPa?", loc="left", fontweight="bold")
+    # (c) benchmarks --------------------------------------------------------------
+    ax = ax_c
+    xs, x, prev = [], 0.0, None
+    for grp, *_ in BENCH:
+        if prev is not None and grp != prev:
+            x += 0.6
+        xs.append(x); x += 1.0; prev = grp
+    lo_c, hi_c = BENCH[0][2], BENCH[0][3]
+    ax.axhspan(lo_c, hi_c, color="#111111", alpha=0.08, lw=0, zorder=0)
+    ax.axhline(LIN["K"], color="#111111", lw=0.7, ls="--", alpha=0.6, zorder=0)
+    for xi, (grp, lab, lo, hi, kind, c) in zip(xs, BENCH):
+        filled = kind == "osm"
+        if hi > lo * 1.001:
+            ax.plot([xi, xi], [lo, hi], color=c, lw=7, alpha=0.30 if filled else 0.0,
+                    solid_capstyle="butt", zorder=2)
+            if not filled:
+                ax.plot([xi, xi], [lo, hi], color=c, lw=1.2, zorder=2)
+                ax.plot([xi - 0.13, xi + 0.13], [lo, lo], color=c, lw=1.2)
+                ax.plot([xi - 0.13, xi + 0.13], [hi, hi], color=c, lw=1.2)
+        mid = LIN["K"] if xi == xs[0] else (0.38 if "cartilage" in lab else np.sqrt(lo * hi))
+        ax.plot(xi, mid, "o" if filled else "D", ms=7 if xi == xs[0] else 6,
+                mfc=c if filled else "white", mec="white" if filled else c, mew=1.2 if not filled else 0.8,
+                zorder=4)
+    # group labels
+    grp_pos = {}
+    for xi, (grp, *_r) in zip(xs, BENCH):
+        grp_pos.setdefault(grp, []).append(xi)
+    for grp, pos in grp_pos.items():
+        ax.text(np.mean(pos), 22, grp, ha="center", va="bottom", fontsize=7.2, color="#333333",
+                fontweight="bold")
+        if len(pos) > 1:
+            ax.plot([min(pos) - 0.35, max(pos) + 0.35], [19, 19], color="#999999", lw=0.8)
+    ax.set_xticks(xs)
+    ax.set_xticklabels([b[1] for b in BENCH], fontsize=7.2, rotation=35, ha="right",
+                       rotation_mode="anchor")
+    ax.set_yscale("log"); ax.set_ylim(5e-5, 60)
+    ax.set_xlim(xs[0] - 1.0, xs[-1] + 0.9)
+    ax.set_ylabel("Modulus (MPa)")
+    ax.yaxis.grid(True, which="major", color="#e6e6e6", lw=0.6); ax.set_axisbelow(True)
+    leg = [Line2D([], [], marker="o", ls="", mfc="#6b6b6b", mec="white", ms=6.5,
+                  label="Osmotic / compressive modulus  K = c ∂Π/∂c"),
+           Line2D([], [], marker="D", ls="", mfc="white", mec="#6b6b6b", mew=1.2, ms=6,
+                  label="Shear modulus G′ (for scale)")]
+    ax.legend(handles=leg, loc="lower left", frameon=False, fontsize=7.3)
+    ax.text(xs[0] + 0.45, LIN["K"] * 1.25, f"{LIN['K']:.2f} MPa", fontsize=7.4, color="#111111", va="bottom")
+    ax.set_title("c", loc="left", fontweight="bold", fontsize=11, x=-0.065)
 
-    fig.tight_layout()
     fig.savefig(path + ".png", dpi=300)
     fig.savefig(path + ".pdf")
+    plt.close(fig)
+
+def si_figure(path):
+    fig, axs = plt.subplots(2, 3, figsize=(7.2, 4.9), sharex=True)
+    mk = ["o", "^", "D"]
+    for ax, g in zip(axs.flat[:5], [0, 5, 10, 15, 20]):
+        ax.axhline(1, color="#bbbbbb", lw=0.6, ls="--", zorder=0)
+        for i, tr in enumerate(H[g]):
+            excl = g == 20 and i in EXCLUDED_20
+            ax.plot(TIMES, tr, ls=":" if excl else "-", marker=mk[i], ms=3.6, lw=1.0,
+                    color=["#0072B2", "#D55E00", "#009E73"][i], mfc="white" if excl else None,
+                    label=f"Sample {i+1}" + (" (excluded)" if excl else ""))
+        ax.set_ylim(0.3, 1.12)
+        ttl = f"{g}% PEG" + (f"  (Π = {PI[g]:.3f} MPa)" if g in PI else f"  (Π ≈ {PI_20:.2f} MPa*)")
+        ax.set_title(ttl, fontsize=8.5)
+        if g == 20:
+            ax.legend(frameon=False, fontsize=6.6, loc="center right")
+            ax.text(0.97, 0.30, "not used for the modulus\n* Π extrapolated", transform=ax.transAxes, ha="right",
+                    va="top", fontsize=6.8, color=NOTE)
+    ax = axs.flat[5]
+    ax.axhline(1, color="#bbbbbb", lw=0.6, ls="--", zorder=0)
+    for g in GROUPS:
+        arr = np.array(H[g]); m = arr.mean(0); s = arr.std(0, ddof=1)
+        ax.fill_between(TIMES, m - s, m + s, color=COL[g], alpha=0.15, lw=0)
+        ax.plot(TIMES, m, "-o", ms=3.2, lw=1.2, color=COL[g], label=f"{g}%")
+    ax.set_ylim(0.6, 1.08)
+    ax.set_title("0–15% PEG, mean ± SD (n = 3)", fontsize=8.5)
+    ax.legend(frameon=False, fontsize=6.8, ncol=4, loc="lower right", columnspacing=1.0,
+              handlelength=1.6)
+    for i, ax in enumerate(axs.flat):
+        ax.set_xticks([0, 20, 40, 60, 80])
+        ax.text(-0.2, 1.06, "abcdef"[i], transform=ax.transAxes, fontweight="bold", fontsize=10)
+        if i % 3 == 0:
+            ax.set_ylabel(r"Relative height, $h/h_0$")
+        if i >= 3:
+            ax.set_xlabel("Time (h)")
+    fig.tight_layout(h_pad=1.2, w_pad=1.0)
+    fig.savefig(path + ".png", dpi=300)
+    fig.savefig(path + ".pdf")
+    plt.close(fig)
 
 if __name__ == "__main__":
     txt = report()
     print(txt)
-    with open("results.md", "w") as fh:
+    with open(os.path.join(HERE, "results.md"), "w") as fh:
         fh.write(txt + "\n")
-    figure("coacervate_osmotic_modulus")
+    figure(os.path.join(HERE, "coacervate_osmotic_modulus"))
+    si_figure(os.path.join(HERE, "SI_raw_trajectories"))
