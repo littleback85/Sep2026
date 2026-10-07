@@ -1,0 +1,26 @@
+# Values read by eye from the original figure image (approximate). Replace with raw data before publication.
+# in_fit = 1: filled symbol, used in fit; 0: open symbol, plotted but not fitted
+system,stabilizer_wt_pct,max_stable_oil_wt_pct,in_fit
+PDDA/BSA,0.1,70,1
+PDDA/BSA,0.2,75,1
+PDDA/BSA,0.9,85,1
+PDDA/BSA,2.5,90,1
+PDDA/BSA,3.5,90,1
+PDDA/BSA,4.5,90,1
+Tween 80,0.05,20,1
+Tween 80,0.1,40,1
+Tween 80,0.15,50,0
+Tween 80,0.2,52,1
+Tween 80,0.4,65,1
+Tween 80,0.7,75,1
+Tween 80,1,80,1
+Tween 80,2,85,1
+Tween 80,4.5,90,1
+native BSA,0.5,5,1
+native BSA,2,30,1
+native BSA,2.8,35,0
+native BSA,3.2,40,1
+native BSA,3.6,50,1
+native BSA,6,75,1
+native BSA,7,80,1
+native BSA,25,85,1
