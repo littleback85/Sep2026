@@ -1,0 +1,65 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="780" viewBox="0 0 1200 780" font-family="Inter, Helvetica, Arial, sans-serif">
+<rect width="1200" height="780" fill="#fcfcfb"/>
+<defs><clipPath id="plot"><rect x="110" y="120" width="1050" height="570"/></clipPath></defs>
+<text x="110" y="42" font-size="24" font-weight="600" fill="#0b0b0b">Maximum capillary pressure of a particle-laden film vs. particle radius</text>
+<text x="110" y="70" font-size="15" fill="#52514e">Theory: P<tspan baseline-shift="sub" font-size="11">max</tspan> = 2pσ cosθ / R (Denkov 1992; Kaptay 2006, single layer). Points: critical pressures measured by centrifugation.</text>
+<line x1="110" x2="1160" y1="690.0" y2="690.0" stroke="#e6e5e1" stroke-width="1"/>
+<text x="98" y="695.0" font-size="14" text-anchor="end" fill="#52514e">10 Pa</text>
+<line x1="110" x2="1160" y1="608.6" y2="608.6" stroke="#e6e5e1" stroke-width="1"/>
+<text x="98" y="613.6" font-size="14" text-anchor="end" fill="#52514e">100 Pa</text>
+<line x1="110" x2="1160" y1="527.1" y2="527.1" stroke="#e6e5e1" stroke-width="1"/>
+<text x="98" y="532.1" font-size="14" text-anchor="end" fill="#52514e">1 kPa</text>
+<line x1="110" x2="1160" y1="445.7" y2="445.7" stroke="#e6e5e1" stroke-width="1"/>
+<text x="98" y="450.7" font-size="14" text-anchor="end" fill="#52514e">10 kPa</text>
+<line x1="110" x2="1160" y1="364.3" y2="364.3" stroke="#e6e5e1" stroke-width="1"/>
+<text x="98" y="369.3" font-size="14" text-anchor="end" fill="#52514e">100 kPa</text>
+<line x1="110" x2="1160" y1="282.9" y2="282.9" stroke="#e6e5e1" stroke-width="1"/>
+<text x="98" y="287.9" font-size="14" text-anchor="end" fill="#52514e">1 MPa</text>
+<line x1="110" x2="1160" y1="201.4" y2="201.4" stroke="#e6e5e1" stroke-width="1"/>
+<text x="98" y="206.4" font-size="14" text-anchor="end" fill="#52514e">10 MPa</text>
+<line x1="110" x2="1160" y1="120.0" y2="120.0" stroke="#e6e5e1" stroke-width="1"/>
+<text x="98" y="125.0" font-size="14" text-anchor="end" fill="#52514e">100 MPa</text>
+<line x1="205.8" x2="205.8" y1="120" y2="690" stroke="#e6e5e1" stroke-width="1"/>
+<text x="205.8" y="714" font-size="14" text-anchor="middle" fill="#52514e">10 nm</text>
+<line x1="523.8" x2="523.8" y1="120" y2="690" stroke="#e6e5e1" stroke-width="1"/>
+<text x="523.8" y="714" font-size="14" text-anchor="middle" fill="#52514e">100 nm</text>
+<line x1="841.9" x2="841.9" y1="120" y2="690" stroke="#e6e5e1" stroke-width="1"/>
+<text x="841.9" y="714" font-size="14" text-anchor="middle" fill="#52514e">1 µm</text>
+<line x1="1160.0" x2="1160.0" y1="120" y2="690" stroke="#e6e5e1" stroke-width="1"/>
+<text x="1160.0" y="714" font-size="14" text-anchor="middle" fill="#52514e">10 µm</text>
+<line x1="110" x2="1160" y1="690" y2="690" stroke="#8a8984" stroke-width="1"/>
+<text x="635" y="752" font-size="15" text-anchor="middle" fill="#0b0b0b">Particle radius R</text>
+<text transform="translate(30,405) rotate(-90)" font-size="15" text-anchor="middle" fill="#0b0b0b">Pressure (Pa)</text>
+<g clip-path="url(#plot)">
+<path d="M110.0,182.0 L127.5,186.5 L145.0,191.0 L162.5,195.4 L180.0,199.9 L197.5,204.4 L215.0,208.9 L232.5,213.4 L250.0,217.8 L267.5,222.3 L285.0,226.8 L302.5,231.3 L320.0,235.8 L337.5,240.2 L355.0,244.7 L372.5,249.2 L390.0,253.7 L407.5,258.2 L425.0,262.6 L442.5,267.1 L460.0,271.6 L477.5,276.1 L495.0,280.6 L512.5,285.0 L530.0,289.5 L547.5,294.0 L565.0,298.5 L582.5,303.0 L600.0,307.4 L617.5,311.9 L635.0,316.4 L652.5,320.9 L670.0,325.4 L687.5,329.8 L705.0,334.3 L722.5,338.8 L740.0,343.3 L757.5,347.8 L775.0,352.2 L792.5,356.7 L810.0,361.2 L827.5,365.7 L845.0,370.2 L862.5,374.6 L880.0,379.1 L897.5,383.6 L915.0,388.1 L932.5,392.6 L950.0,397.0 L967.5,401.5 L985.0,406.0 L1002.5,410.5 L1020.0,415.0 L1037.5,419.4 L1055.0,423.9 L1072.5,428.4 L1090.0,432.9 L1107.5,437.4 L1125.0,441.8 L1142.5,446.3 L1160.0,450.8 L1160.0,621.5 L1142.5,617.0 L1125.0,612.5 L1107.5,608.0 L1090.0,603.5 L1072.5,599.1 L1055.0,594.6 L1037.5,590.1 L1020.0,585.6 L1002.5,581.1 L985.0,576.7 L967.5,572.2 L950.0,567.7 L932.5,563.2 L915.0,558.7 L897.5,554.3 L880.0,549.8 L862.5,545.3 L845.0,540.8 L827.5,536.3 L810.0,531.9 L792.5,527.4 L775.0,522.9 L757.5,518.4 L740.0,513.9 L722.5,509.5 L705.0,505.0 L687.5,500.5 L670.0,496.0 L652.5,491.5 L635.0,487.1 L617.5,482.6 L600.0,478.1 L582.5,473.6 L565.0,469.1 L547.5,464.7 L530.0,460.2 L512.5,455.7 L495.0,451.2 L477.5,446.7 L460.0,442.3 L442.5,437.8 L425.0,433.3 L407.5,428.8 L390.0,424.3 L372.5,419.9 L355.0,415.4 L337.5,410.9 L320.0,406.4 L302.5,401.9 L285.0,397.5 L267.5,393.0 L250.0,388.5 L232.5,384.0 L215.0,379.5 L197.5,375.1 L180.0,370.6 L162.5,366.1 L145.0,361.6 L127.5,357.1 L110.0,352.7 Z" fill="#b7d3f6" fill-opacity="0.55"/>
+<path d="M110.0,217.1 L127.5,221.5 L145.0,226.0 L162.5,230.5 L180.0,235.0 L197.5,239.5 L215.0,243.9 L232.5,248.4 L250.0,252.9 L267.5,257.4 L285.0,261.9 L302.5,266.3 L320.0,270.8 L337.5,275.3 L355.0,279.8 L372.5,284.3 L390.0,288.7 L407.5,293.2 L425.0,297.7 L442.5,302.2 L460.0,306.7 L477.5,311.1 L495.0,315.6 L512.5,320.1 L530.0,324.6 L547.5,329.1 L565.0,333.5 L582.5,338.0 L600.0,342.5 L617.5,347.0 L635.0,351.5 L652.5,355.9 L670.0,360.4 L687.5,364.9 L705.0,369.4 L722.5,373.9 L740.0,378.3 L757.5,382.8 L775.0,387.3 L792.5,391.8 L810.0,396.3 L827.5,400.7 L845.0,405.2 L862.5,409.7 L880.0,414.2 L897.5,418.7 L915.0,423.1 L932.5,427.6 L950.0,432.1 L967.5,436.6 L985.0,441.1 L1002.5,445.5 L1020.0,450.0 L1037.5,454.5 L1055.0,459.0 L1072.5,463.5 L1090.0,467.9 L1107.5,472.4 L1125.0,476.9 L1142.5,481.4 L1160.0,485.9 L1160.0,558.6 L1142.5,554.2 L1125.0,549.7 L1107.5,545.2 L1090.0,540.7 L1072.5,536.2 L1055.0,531.8 L1037.5,527.3 L1020.0,522.8 L1002.5,518.3 L985.0,513.8 L967.5,509.4 L950.0,504.9 L932.5,500.4 L915.0,495.9 L897.5,491.4 L880.0,487.0 L862.5,482.5 L845.0,478.0 L827.5,473.5 L810.0,469.0 L792.5,464.6 L775.0,460.1 L757.5,455.6 L740.0,451.1 L722.5,446.6 L705.0,442.2 L687.5,437.7 L670.0,433.2 L652.5,428.7 L635.0,424.2 L617.5,419.8 L600.0,415.3 L582.5,410.8 L565.0,406.3 L547.5,401.8 L530.0,397.4 L512.5,392.9 L495.0,388.4 L477.5,383.9 L460.0,379.4 L442.5,375.0 L425.0,370.5 L407.5,366.0 L390.0,361.5 L372.5,357.0 L355.0,352.6 L337.5,348.1 L320.0,343.6 L302.5,339.1 L285.0,334.6 L267.5,330.2 L250.0,325.7 L232.5,321.2 L215.0,316.7 L197.5,312.2 L180.0,307.8 L162.5,303.3 L145.0,298.8 L127.5,294.3 L110.0,289.8 Z" fill="#6da7ec" fill-opacity="0.55"/>
+<path d="M110.0,256.6 L127.5,261.1 L145.0,265.6 L162.5,270.1 L180.0,274.5 L197.5,279.0 L215.0,283.5 L232.5,288.0 L250.0,292.5 L267.5,296.9 L285.0,301.4 L302.5,305.9 L320.0,310.4 L337.5,314.9 L355.0,319.3 L372.5,323.8 L390.0,328.3 L407.5,332.8 L425.0,337.3 L442.5,341.7 L460.0,346.2 L477.5,350.7 L495.0,355.2 L512.5,359.7 L530.0,364.1 L547.5,368.6 L565.0,373.1 L582.5,377.6 L600.0,382.1 L617.5,386.5 L635.0,391.0 L652.5,395.5 L670.0,400.0 L687.5,404.5 L705.0,408.9 L722.5,413.4 L740.0,417.9 L757.5,422.4 L775.0,426.9 L792.5,431.3 L810.0,435.8 L827.5,440.3 L845.0,444.8 L862.5,449.3 L880.0,453.7 L897.5,458.2 L915.0,462.7 L932.5,467.2 L950.0,471.7 L967.5,476.1 L985.0,480.6 L1002.5,485.1 L1020.0,489.6 L1037.5,494.1 L1055.0,498.5 L1072.5,503.0 L1090.0,507.5 L1107.5,512.0 L1125.0,516.5 L1142.5,520.9 L1160.0,525.4" fill="none" stroke="#184f95" stroke-width="2"/>
+</g>
+<text x="1033.4" y="483.0" font-size="13" fill="#0b0b0b" text-anchor="middle" transform="rotate(14.4 1033.4 493.0)">p = 0.3, σ = 35 mN/m, θ = 60°</text>
+<line x1="135.2" x2="661.0" y1="364.3" y2="364.3" stroke="#eb6834" stroke-width="2" stroke-dasharray="6 4"/>
+<line x1="135.2" x2="135.2" y1="358.3" y2="370.3" stroke="#eb6834" stroke-width="2"/>
+<line x1="661.0" x2="661.0" y1="358.3" y2="370.3" stroke="#eb6834" stroke-width="2"/>
+<circle cx="398.1" cy="364.3" r="7" fill="#eb6834" stroke="#fcfcfb" stroke-width="2"/>
+<line x1="398.1" x2="398.1" y1="322.3" y2="356.3" stroke="#eb6834" stroke-width="1.5"/>
+<circle cx="398.1" cy="315.3" r="7" fill="#fcfcfb" stroke="#eb6834" stroke-width="2"/>
+<text x="412.1" y="320.3" font-size="13" fill="#52514e">their calculated Pc,max (~4×)</text>
+<text x="671.0" y="362.3" font-size="14" fill="#0b0b0b">Silica, decane/water, centrifuge</text>
+<text x="671.0" y="379.3" font-size="12.5" fill="#52514e">Kruglyakov et al. (100 kPa)</text>
+<line x1="205.8" x2="579.8" y1="473.2" y2="473.2" stroke="#1baf7a" stroke-width="2" stroke-dasharray="6 4"/>
+<line x1="205.8" x2="205.8" y1="467.2" y2="479.2" stroke="#1baf7a" stroke-width="2"/>
+<line x1="579.8" x2="579.8" y1="467.2" y2="479.2" stroke="#1baf7a" stroke-width="2"/>
+<circle cx="392.8" cy="473.2" r="7" fill="#1baf7a" stroke="#fcfcfb" stroke-width="2"/>
+<text x="589.8" y="478.2" font-size="14" fill="#0b0b0b">Carbon black 0.015 wt%, 0.6 M NaCl: 4.6 kPa</text>
+<line x1="205.8" x2="579.8" y1="499.3" y2="499.3" stroke="#1baf7a" stroke-width="2" stroke-dasharray="6 4"/>
+<line x1="205.8" x2="205.8" y1="493.3" y2="505.3" stroke="#1baf7a" stroke-width="2"/>
+<line x1="579.8" x2="579.8" y1="493.3" y2="505.3" stroke="#1baf7a" stroke-width="2"/>
+<circle cx="392.8" cy="499.3" r="7" fill="#1baf7a" stroke="#fcfcfb" stroke-width="2"/>
+<text x="589.8" y="504.3" font-size="14" fill="#0b0b0b">Carbon black 0.015 wt%, pH 3.3, no salt: 2.2 kPa</text>
+<rect x="110" y="85" width="22" height="14" rx="2" fill="#b7d3f6"/>
+<text x="140" y="97" font-size="13" fill="#0b0b0b">Theory, full range: p 0.1–1, σ 20–50 mN/m, θ 30–80°</text>
+<rect x="520" y="85" width="22" height="14" rx="2" fill="#6da7ec"/>
+<text x="550" y="97" font-size="13" fill="#0b0b0b">Typical: p 0.2–0.5, σ 30–50, θ 50–70°</text>
+<circle cx="828" cy="92" r="6" fill="#52514e"/>
+<line x1="842" x2="870" y1="92" y2="92" stroke="#52514e" stroke-width="2" stroke-dasharray="6 4"/>
+<text x="878" y="97" font-size="13" fill="#0b0b0b">Measured; dashes = plausible R range</text>
+</svg>
