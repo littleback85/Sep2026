@@ -1,0 +1,160 @@
+{
+ "zoom": {
+  "contour_nm": 261.944,
+  "bsa_in_view": 28.602,
+  "contour_per_bsa": 9.158,
+  "n_chains": 7,
+  "phi_mobile": 0.393,
+  "anchored_top": 9.989,
+  "order_mobile": {
+   "S": 0.064,
+   "mag": 0.112,
+   "L": 169.202
+  },
+  "order_anchored": {
+   "S": 0.593,
+   "mag": 0.593,
+   "L": 74.325
+  }
+ },
+ "films": {
+  "rest": {
+   "contour_nm": 368.395,
+   "bsa_in_view": 41.447,
+   "contour_per_bsa": 8.888,
+   "n_chains": 12,
+   "phi_core": 0.426,
+   "h": 50.8,
+   "order_core": {
+    "S": -0.047,
+    "mag": 0.176,
+    "L": 232.1
+   }
+  },
+  "step": {
+   "contour_nm": 236.879,
+   "bsa_in_view": 28.216,
+   "contour_per_bsa": 8.395,
+   "n_chains": 8,
+   "h_left": 27.7,
+   "h_right": 35.4,
+   "x_front": 1.27
+  },
+  "hb": {
+   "contour_nm": 192.996,
+   "bsa_in_view": 21.971,
+   "contour_per_bsa": 8.784,
+   "n_chains": 6,
+   "h": 20.0,
+   "gap_mid": 1.999,
+   "order": {
+    "S": 0.455,
+    "mag": 0.457,
+    "L": 193.395
+   },
+   "midplane_crossings": 5
+  },
+  "comp": {
+   "contour_nm": 175.533,
+   "bsa_in_view": 21.971,
+   "n_chains": 6,
+   "h": 13.0,
+   "squeeze": 0.65,
+   "gap_mid": 1.409,
+   "order": {
+    "S": 0.654,
+    "mag": 0.655,
+    "L": 175.902
+   },
+   "midplane_crossings": 5,
+   "contour_per_bsa": 7.989
+  }
+ },
+ "capacity": {
+  "charges_per_chain": [
+   6185.439,
+   9278.159
+  ],
+  "contour_um": [
+   3.093,
+   4.639
+  ],
+  "kuhn_segments": [
+   515.453,
+   773.18
+  ],
+  "Rg_nm": [
+   55.612,
+   68.111
+  ],
+  "Ree_nm": [
+   136.222,
+   166.837
+  ],
+  "nB_per_nm3": 0.002,
+  "BSA_spacing_nm": 7.514,
+  "BSA_per_chain_charge_matched": [
+   343.636,
+   713.705
+  ],
+  "BSA_per_chain_central": 498.826,
+  "contour_per_BSA_nm": [
+   6.5,
+   9.0
+  ],
+  "c_PDDA_mg_per_mL_if_matched": [
+   8.226,
+   11.39
+  ],
+  "mesh_nm": [
+   6.866,
+   8.079
+  ],
+  "BSA_in_coil_volume": [
+   1698.085,
+   3119.582
+  ],
+  "chains_sharing_a_coil_volume": [
+   4.255,
+   5.212
+  ],
+  "Gamma_per_layer_mg_m2": 1.861,
+  "Gamma_film_BSA_per_nm2": 0.067,
+  "chain_footprint_nm2": [
+   5093.538,
+   10578.886
+  ],
+  "chain_footprint_diameter_nm": [
+   80.531,
+   116.058
+  ],
+  "coil_lateral_diameter_nm": [
+   90.814,
+   111.224
+  ],
+  "film_crossings_per_chain": [
+   46.391,
+   69.586
+  ],
+  "contour_per_crossing_nm": 66.667,
+  "dry_thickness_4_layers_nm": [
+   5.668,
+   5.744
+  ],
+  "phi_dry_bulk": 0.198,
+  "phi_dry_at_hb": [
+   0.283,
+   0.287
+  ],
+  "phi_dry_at_0.86MPa": [
+   0.436,
+   0.532
+  ],
+  "layer_pitch_at_hb_nm": 5.0,
+  "layer_pitch_at_0.86MPa_nm": [
+   2.7,
+   3.25
+  ],
+  "rest_film_nm": 50.8
+ }
+}
