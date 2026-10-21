@@ -11,6 +11,7 @@ matplotlib, shapely). `python pdda_capacity.py` prints the PDDA numbers.
 | `out/fig1c_film_states.*` | Fig. 1c top strip, 98 × 50 mm, 1 nm = 0.44 mm in all four windows |
 | `out/fig1c_film_states_art.*` | same molecules, no text |
 | `out/legend.*` | colour key |
+| `out/fig1_schematics_pack.pdf` | **download pack**: p1 all panels, labelled and text-free, with keys (colour, symbols, scale) and draft legend text, 1:1 on A4; p2 the numbers |
 | `out/sheet.pdf/.png` | review sheet: both schematics + numbers |
 | `out/stats.json`, `out/pdda_capacity.json` | what was drawn; the capacity calculation |
 

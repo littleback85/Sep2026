@@ -10,6 +10,8 @@ out/fig1c_film_states_art.* same molecules, no text
 out/legend.*                colour key (adsorbed / anchored / mobile BSA, PDDA)
 out/fig1a_zoom_break.*      zoom with a break in the mobile layer (its thickness is set by V_C)
 out/sheet.pdf/.png          review sheet: both schematics + the PDDA numbers
+out/fig1_schematics_pack.pdf   download pack: p1 all panels (labelled + text-free),
+                            keys and draft legend text, 1:1 on A4; p2 the numbers
 out/stats.json              what was drawn (counts, contour per BSA, chain orientation)
 
 Built 1:1 at final size (Nature preset: Arial/Liberation Sans, 5-7 pt).
@@ -286,6 +288,9 @@ def draw_legend(fig, o, x, y, mmpn=0.44):
 
 # ----------------------------------------------------------------- review sheet
 def make_sheet(Sz, stz, F, stem):
+    save(sheet_figure(Sz, stz, F), stem, dpi=400, svg=False)
+
+def sheet_figure(Sz, stz, F):
     """Both schematics at final size plus the numbers behind them (183 mm wide)."""
     r = CAP.calc(); f = CAP.fmt
     W, H = 183.0, 108.0
@@ -354,7 +359,175 @@ def make_sheet(Sz, stz, F, stem):
             o.text(x, y, t, fontsize=7 if b else 6, fontweight="bold" if b else "normal",
                    va="top", ha="left", color=INK)
             y += 3.3 if b else 2.75
-    save(fig, stem, dpi=400, svg=False)
+    return fig
+
+
+# ----------------------------------------------------------------- download pack
+HB_ = r"$h_\mathrm{b}$"
+LEGEND_TEXT = [
+    ("Zoom (Fig. 1a).", "Molecules to scale (BSA 8 nm, PDDA 0.8 nm); in the break version the mobile layer "
+     r"is shortened, its thickness being set by $V_\mathrm{C}$. BSA adsorbed at the oil (dark green) and a "
+     "second BSA row glued onto it by PDDA (grey) form the anchored layer, ≈ " + HB_ + "/2 = 10 nm. Above it "
+     "the mobile coacervate is the bulk liquid: light-green BSA at area fraction ≈ 0.4 in a PDDA network of "
+     "isotropic orientation. One PDDA chain (Mw 1.0–1.5 MDa, 6,200–9,300 charges) charge-matches ≈ 340–710 "
+     "BSA, about 7–9 nm of chain per BSA, so each chain wraps and bridges the proteins it glues."),
+    ("Film states (Fig. 1c, top).", "States at the points marked on Π(h), drawn at one scale and ordered "
+     "by h as on the axis below. (1) Rest, h = " + HB_ + " + 4d: two anchored layers and a mobile core of bulk "
+     "coacervate. Between (1) and (2) the core leaves one layer at a time: a step front between "
+     + HB_ + " + d and " + HB_ + " + 2d moves toward the thicker film. (2) h = " + HB_ + ": the four anchored "
+     "rows (same molecules as in (1)) meet and PDDA stitches across the midplane; a chain neutralises all "
+     "four layers over ≈ 80–115 nm and crosses the film tens of times. (3) h = 0.65 " + HB_ + " at 0.86 MPa: "
+     "the same molecules and chains as (2), closer and flatter; water and ions leave, BSA and PDDA stay. "
+     "Arrows in the oil, applied pressure (weight ~ log Π)."),
+]
+
+def pack_page(Sz, F, seeds=(7, 3)):
+    """A4 page: labelled panels, text-free panels, keys, draft legend text; all 1:1."""
+    W, H = 210.0, 297.0
+    fig = plt.figure(figsize=(W * MM, H * MM))
+    o = overlay(fig)
+    L = 12.0
+    o.text(L, 11, "Fig. 1 molecular schematics: panels at final size (1:1, vector)", fontsize=9,
+           fontweight="bold", va="center")
+    o.text(L, 15.5, "a, corona zoom (1 nm = 0.6 mm); c, film states (1 nm = 0.44 mm, all four windows). "
+           f"Seeds: zoom {seeds[0]}, film {seeds[1]}. Fonts embedded as text.", fontsize=6,
+           color="#555555", va="center")
+    zw, zh = SC.ZOOM["w"] * 0.6, SC.ZOOM["h"] * 0.6
+    sw, sh, wh = strip_size(True)
+    xs = (L, L + zw + 4.0, L + 2 * zw + 10.0)
+
+    def section(y, s):
+        o.text(L, y, s, fontsize=7.5, fontweight="bold", va="center", color=INK)
+        o.plot([L, W - L], [y + 2.2, y + 2.2], color="#BBBBBB", lw=0.4)
+
+    def cap(x, y, s):
+        o.text(x, y, s, fontsize=5.5, color="#666666", va="top", ha="left")
+
+    # 1 labelled
+    y1 = 22.0
+    section(y1, "1  With labels")
+    yz = y1 + 6.0
+    draw_zoom(fig, None, xs[0], yz, Sz, labels=True)
+    draw_zoom(fig, None, xs[1], yz, Sz, labels=True, break_y=44.0)
+    draw_strip(fig, F, x=xs[2], y=yz - 3.0, labels=True, legend=False)
+    cap(xs[0], yz + zh + 1.2, "a  zoom")
+    cap(xs[1], yz + zh + 1.2, "a  zoom, mobile layer shortened\n   (recommended)")
+    cap(xs[2] + STRIP["left"], yz - 3.0 + STRIP["top"] + wh + STRIP["foot"] + 0.6, "c  film states, top of panel c")
+
+    # 2 text-free
+    y2 = yz + zh + 10.0
+    section(y2, "2  Text-free (for compositing; same molecules)")
+    yz2 = y2 + 6.0
+    draw_zoom(fig, None, xs[0], yz2, Sz, labels=False)
+    draw_zoom(fig, None, xs[1], yz2, Sz, labels=False, break_y=44.0)
+    draw_strip(fig, F, x=xs[2], y=yz2 - STRIP["top"], labels=False, legend=False)
+    # scale bars for the text-free art
+    for x, mmpn, lab in ((xs[0], 0.6, "10 nm  (zoom)"),
+                         (xs[2] + STRIP["left"], STRIP["win_w"] / SC.FILM["w"], "10 nm  (film states)")):
+        yb = yz2 + (zh if mmpn == 0.6 else wh) + 3.0
+        o.plot([x, x + 10 * mmpn], [yb, yb], color=INK, lw=1.0, solid_capstyle="butt")
+        o.text(x + 10 * mmpn + 1.5, yb, lab, fontsize=6, va="center", color=INK)
+
+    # 3 keys
+    y3 = yz2 + zh + 11.0
+    section(y3, "3  Keys")
+    yk = y3 + 6.5
+    o.text(L, yk, "Colour", fontsize=6.5, fontweight="bold", va="center")
+    draw_legend(fig, o, L + 12.0, yk)
+    yk += 6.5
+    o.text(L, yk, "Symbols", fontsize=6.5, fontweight="bold", va="center")
+    col = [L + 12.0, L + 70.0, L + 128.0]
+    rows = []
+    def sym_pressure(x, y):
+        for k, lw in enumerate((0.5, 0.8, 1.3)):
+            arrow(o, (x + 1.2 * k + 0.5, y - 1.6), (x + 1.2 * k + 0.5, y + 1.4), lw=lw, head=2.2 + 2 * lw)
+    def sym_h(x, y):
+        arrow(o, (x + 1.5, y), (x + 1.5, y - 1.8), lw=0.45, head=2.4)
+        arrow(o, (x + 1.5, y), (x + 1.5, y + 1.8), lw=0.45, head=2.4)
+    def sym_front(x, y):
+        arrow(o, (x, y), (x + 3.6, y), lw=0.6, head=3.5)
+    def sym_bracket(x, y):
+        o.plot([x + 2.0, x + 2.0], [y - 1.8, y + 1.8], color=INK, lw=0.45)
+        for yb in (y - 1.8, y + 1.8):
+            o.plot([x + 1.55, x + 2.0], [yb, yb], color=INK, lw=0.45)
+    def sym_num(x, y):
+        for k in range(3):
+            circ_num(o, x + 1.2 + 2.7 * k, y, 3 - k, r=1.05, fs=6)
+    def sym_break(x, y):
+        xx = np.linspace(x, x + 4.0, 60); wv = 0.3 * np.sin(2 * np.pi * (xx - x) / 2.2)
+        o.fill_between(xx, y - 0.55 + wv, y + 0.55 + wv, color="white", zorder=60)
+        o.plot(xx, y - 0.55 + wv, color=INK, lw=0.4, zorder=61); o.plot(xx, y + 0.55 + wv, color=INK, lw=0.4, zorder=61)
+        o.add_patch(Rectangle((x - 0.2, y - 1.6), 4.4, 3.2, fc=P["coac_bg"], ec="none", zorder=59))
+    def sym_part(x, y):
+        o.plot([x + 1.5, x + 1.5], [y - 1.8, y + 0.9], color=PART, lw=0.6, ls=(0, (2.2, 1.4)))
+        arrow(o, (x + 1.5, y + 0.7), (x + 1.5, y + 1.9), lw=0.6, color=PART, head=3.5)
+    def sym_tint(x, y):
+        o.add_patch(Rectangle((x, y - 1.3), 2.0, 2.6, fc=P["coac_bg"], ec="none"))
+        o.add_patch(Rectangle((x + 2.0, y - 1.3), 2.0, 2.6, fc="#BFE3D2", ec="none"))
+    syms = [(sym_pressure, "applied pressure Π (arrow weight ~ log Π)"),
+            (sym_h, "film thickness h (same scale in all windows)"),
+            (sym_front, "step front: one mobile layer leaves"),
+            (sym_num, "film states marked on the Π(h) curve"),
+            (sym_bracket, r"$h_\mathrm{b}$/2 anchored layer; 4$d$ mobile core"),
+            (sym_tint, "coacervate tint; darker = less water"),
+            (sym_break, "break: mobile layer shortened"),
+            (sym_part, "solutes reach oil by partitioning (Fig. 6)"),
+            (None, "")]
+    for k, (fn, lab) in enumerate(syms):
+        x = col[k % 3]; y = yk + 5.0 * (k // 3)
+        if fn is None:
+            continue
+        fn(x, y)
+        o.text(x + 9.0, y, lab, fontsize=6, va="center", color=INK)
+    yk += 5.0 * 3 + 1.0
+    o.text(L, yk, "Scale", fontsize=6.5, fontweight="bold", va="center")
+    for x, mmpn, lab in ((L + 12.0, 0.6, "10 nm at 0.6 mm/nm (zoom)"),
+                         (L + 70.0, STRIP["win_w"] / SC.FILM["w"], "10 nm at 0.44 mm/nm (film states)")):
+        o.plot([x, x + 10 * mmpn], [yk, yk], color=INK, lw=1.0, solid_capstyle="butt")
+        o.text(x + 10 * mmpn + 1.5, yk, lab, fontsize=6, va="center", color=INK)
+    o.text(L + 128.0, yk, "BSA 8 nm wide; PDDA tube 0.8 nm", fontsize=6, va="center", color=INK)
+
+    # 4 draft legend text
+    y4 = yk + 8.0
+    section(y4, "4  Draft figure-legend text for these schematics")
+    _paragraphs(fig, o, L, y4 + 5.5)
+    return fig
+
+def _paragraphs(fig, o, x, y, width=186.0, fs=6.5, lead=3.0):
+    """Draft legend paragraphs: bold lead-in, then text wrapped by measured width (mm)."""
+    r = fig.canvas.get_renderer()
+    probe = o.text(0, 0, "", fontsize=fs)
+    def wmm(s, bold=False):
+        probe.set_text(s); probe.set_fontweight("bold" if bold else "normal")
+        bb = probe.get_window_extent(r).transformed(o.transData.inverted())
+        return bb.x1 - bb.x0
+    for head, body in LEGEND_TEXT:
+        o.text(x, y, head, fontsize=fs, fontweight="bold", va="top", ha="left", color=INK)
+        x0 = x + wmm(head, True) + 0.9
+        line = ""
+        for w in body.split():
+            trial = (line + " " + w).strip()
+            if wmm(trial) > width - (x0 - x):
+                o.text(x0, y, line, fontsize=fs, va="top", ha="left", color=INK)
+                y += lead; x0 = x; line = w
+            else:
+                line = trial
+        o.text(x0, y, line, fontsize=fs, va="top", ha="left", color=INK)
+        y += lead + 1.6
+    probe.remove()
+    return y
+
+def make_pack(Sz, stz, F, path, seeds=(7, 3)):
+    """One PDF: page 1 = all panels (labelled + text-free) with keys and draft legend
+    text; page 2 = the numbers behind the drawings."""
+    from matplotlib.backends.backend_pdf import PdfPages
+    fig = pack_page(Sz, F, seeds)
+    with PdfPages(path) as pdf:
+        pdf.savefig(fig)
+        plt.close(fig)
+        f2 = sheet_figure(Sz, stz, F)
+        pdf.savefig(f2)
+        plt.close(f2)
 
 
 # ----------------------------------------------------------------- outputs
@@ -392,6 +565,7 @@ def main():
     save(fig, os.path.join(OUT, "legend"))
 
     make_sheet(Sz, stz, F, os.path.join(OUT, "sheet"))
+    make_pack(Sz, stz, F, os.path.join(OUT, "fig1_schematics_pack.pdf"), (a.zoom_seed, a.film_seed))
 
     stats = dict(zoom=stz, films={k: v[2] for k, v in F.items()},
                  capacity=CAP.calc())
