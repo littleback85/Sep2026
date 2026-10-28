@@ -1,0 +1,12 @@
+# Digitized from deck p4 panel E. Nanobubble concentration (1e8 per mL) vs ice grain size; err = half error bar.
+grain_um,conc_1e8_mL,err
+19.3,3.29,0.18
+25.7,3.19,0.20
+38.5,2.99,0.28
+73.2,2.88,0.17
+129,1.89,0.15
+168,1.08,0.15
+202,0.98,0.15
+214,0.92,0.18
+220,0.79,0.25
+221,0.78,0.25

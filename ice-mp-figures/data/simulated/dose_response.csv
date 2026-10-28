@@ -1,0 +1,6 @@
+# Simulated n=3 per condition under H4 (rate proportional to bubble density at fixed pO2=0.21 bar). Rival hypotheses predict a flat rate = 0.28 per 100 h.
+condition,nb_mean,nb_sd,rate_mean,rate_sd
+1 MPa freeze,0.277536,0.029565,0.0272445,0.00404723
+O$_2$ only,0.792993,0.0274951,0.0761206,0.00523834
+Air,3.00132,0.0411268,0.276989,0.0176986
+O$_2$+Ar,4.21802,0.267196,0.39731,0.0388194

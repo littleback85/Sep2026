@@ -1,0 +1,6 @@
+# Digitized from deck p5 panels B (PS, exact values printed) and F (PE, PP, PVC read off log axis, +-5% reading error).
+polymer,mw_before,mw_after
+PS,25236,12159
+PE,95000,88000
+PP,300000,246000
+PVC,88000,79000

@@ -1,0 +1,5 @@
+# Natural ice/snow: <=~5e-8 even for the most contaminated Arctic sea ice (1.2e4 particles/L, ~20 um). Typical lab dosing 10-1000 mg/L PS. Deck grain sizes 20-200 um.
+band,lo,hi
+natural,1e-09,1e-07
+lab,1e-05,0.001
+deck_grain_um,20,200

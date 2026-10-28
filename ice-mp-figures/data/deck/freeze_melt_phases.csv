@@ -1,0 +1,8 @@
+# Phase boundaries read from deck p2 panel B shading.
+phase,start_h,end_h
+frozen,0.0,48.5
+melted,48.5,96.4
+frozen,96.4,144.3
+melted,144.3,192.3
+frozen,192.3,240.7
+melted,240.7,292.0

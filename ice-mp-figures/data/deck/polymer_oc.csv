@@ -1,0 +1,11 @@
+# Digitized from deck p1 panel B (XPS O/C after incubation; water 20 C vs ice -20 C). Stoichiometric O/C from repeat-unit formula (PA as PA6/PA66; PVA fully hydrolysed).
+polymer,oc_water,oc_ice,oc_stoich,contains_O
+PTFE,0.000,0.000,0.000,0
+PE,0.000,0.033,0.000,0
+PP,0.000,0.074,0.000,0
+PS,0.014,0.102,0.000,0
+PVC,0.037,0.149,0.000,0
+PA,0.124,0.183,0.167,1
+PVA,0.232,0.371,0.500,1
+PMMA,0.303,0.384,0.400,1
+PET,0.302,0.411,0.400,1

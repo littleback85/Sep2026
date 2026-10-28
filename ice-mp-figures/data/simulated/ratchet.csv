@@ -1,0 +1,12 @@
+# Per-cycle rate constant k_n/k_1 = rate normalized to remaining sites. 72 h frozen per cycle, oxidant pool decay tau=100.0 h reset at each refreeze, theta_max=0.25. Feedback: bubbles ~ d(theta)^-0.61 with d(theta) fitted to deck p4 D (d_inf=5.0, d0=66.1 um, lambda=0.145). Simulated points: feedback scenario, n=3.
+cycle,feedback,replenish,passivation,sim_mean,sim_sd
+1,1,1,1,1.05864,0.119685
+2,1.31432,1,0.830135,1.39561,0.168857
+3,1.6008,0.999999,0.717974,1.57166,0.16993
+4,1.80256,0.999999,0.638591,1.77337,0.105865
+5,1.91919,0.999999,0.579593,1.95076,0.214053
+6,1.97908,0.999999,0.534153,1.94268,0.144878
+7,2.00801,1,0.498185,2.00131,0.129561
+8,2.02156,1,0.469095,2.09371,0.084046
+9,2.02782,1,0.445154,1.98633,0.0267859
+10,2.0307,1,0.425169,2.02688,0.0641903

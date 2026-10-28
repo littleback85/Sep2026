@@ -1,0 +1,9 @@
+# Predicted response of ROS yield / PS oxidation rate in ice. H1 polymer photosensitizer (Tian 2022); H2 freezing potential (Song 2024); H3 plastic-water interface OH (Qian 2026); H4 freeze-exsolved nanobubbles, light-driven as drawn in the deck; H5 contact electrification with vial/particles.
+manipulation,H1,H2,H3,H4,H5
+No plastic (ROS probe only),v,o,v,o,o
+O$_2$ only; no N$_2$ (same pO$_2$),o,o,o,v,o
+Dark instead of light,v,o,o,v,o
+Reversed-potential salt,o,D,o,o,o
+D$_2$O instead of H$_2$O,^,o,o,^,o
+•OH scavenger (TBA),o,v,v,o,v
+Glass instead of PFA vial,o,o,o,o,v

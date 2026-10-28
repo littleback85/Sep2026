@@ -1,0 +1,10 @@
+# Expected initial oxidation rate of fresh h-PS vs grain-boundary density Sv=2/d. Grain size set by thermal annealing (no additive) or by pre-oxidized, hydroperoxide-reduced PS-d8 spectators. Grain-mediated feedback: both collapse on rate = R_air (Sv/Sv_ref)^0.61.
+series,sv_mm,rate_mean,rate_sd
+anneal,10,0.14832,0.0149968
+anneal,16.6667,0.194835,0.0200007
+anneal,30.7692,0.288759,0.0299208
+anneal,50,0.386952,0.0321903
+anneal,80,0.495632,0.0230952
+spectator,44.4444,0.355098,0.0213351
+spectator,66.6667,0.464774,0.0421262
+spectator,90.9091,0.575985,0.0688871
